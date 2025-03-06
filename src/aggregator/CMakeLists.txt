@@ -1,0 +1,1 @@
+project(Aggregator_Project)
