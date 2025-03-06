@@ -1,5 +1,5 @@
 # AutomotiveOpen1722
-Working applications with IEEE1722 protocol using Open1722 framework.
+Working applications with IEEE1722 protocol using [Open1722](https://github.com/COVESA/Open1722) framework.
 
 ## Introduction
 
