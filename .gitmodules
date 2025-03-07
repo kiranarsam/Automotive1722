@@ -1,4 +1,0 @@
-[submodule "src/common/open1722"]
-	path = src/common/open1722
-	url = https://github.com/kiranarsam/Open1722.git
-	branch = develop
