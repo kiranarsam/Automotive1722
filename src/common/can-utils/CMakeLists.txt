@@ -1,2 +1,0 @@
-
-project(CanUtils_Project)

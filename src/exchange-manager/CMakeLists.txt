@@ -1,1 +1,0 @@
-project(ExchangeManager_Project)

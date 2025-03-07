@@ -1,9 +1,9 @@
 project(Common_Project)
 
-add_subdirectory(can-utils)
-
-add_subdirectory(logger)
-
 add_subdirectory(open1722)
-
+add_subdirectory(ieee-can)
+add_subdirectory(decrypt-encrypt)
+add_subdirectory(can-util)
 add_subdirectory(utils)
+add_subdirectory(settings)
+add_subdirectory(logger)

@@ -1,1 +1,0 @@
-project(EncryptDecrypt_Project)
