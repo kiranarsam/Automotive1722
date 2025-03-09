@@ -14,7 +14,7 @@ extern "C" {
 
 #include "Ieee1722Receiver.hpp"
 #include "CommonUtils.hpp"
-#include "IeeeUtil.hpp"
+#include "AvtpUtil.hpp"
 
 
 #define MAX_ETH_PDU_SIZE                1500
@@ -131,7 +131,7 @@ void Ieee1722Receiver::run()
           continue;
       }
 
-      num_can_msgs = IeeeUtil::extractCanFramesFromAvtp(pdu, can_frames, &exp_cf_seqnum);
+      num_can_msgs = AvtpUtil::extractCanFramesFromAvtp(pdu, can_frames, &exp_cf_seqnum);
 
       exp_cf_seqnum++;
 

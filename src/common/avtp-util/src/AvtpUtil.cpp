@@ -1,5 +1,5 @@
 
-#include "IeeeUtil.hpp"
+#include "AvtpUtil.hpp"
 
 extern "C"
 {
@@ -11,7 +11,7 @@ extern "C"
 
 #include <iostream>
 
-int IeeeUtil::extractCanFramesFromAvtp(uint8_t* pdu, frame_t* can_frames, uint8_t* exp_cf_seqnum)
+int AvtpUtil::extractCanFramesFromAvtp(uint8_t* pdu, frame_t* can_frames, uint8_t* exp_cf_seqnum)
 {
   uint8_t *cf_pdu = nullptr;
   uint8_t *acf_pdu = nullptr;
@@ -57,7 +57,7 @@ int IeeeUtil::extractCanFramesFromAvtp(uint8_t* pdu, frame_t* can_frames, uint8_
   {
       acf_pdu = &pdu[proc_bytes];
 
-      if (!IeeeUtil::isValidAcfPacket(acf_pdu)) {
+      if (!AvtpUtil::isValidAcfPacket(acf_pdu)) {
           return -1;
       }
 
@@ -109,7 +109,7 @@ int IeeeUtil::extractCanFramesFromAvtp(uint8_t* pdu, frame_t* can_frames, uint8_
   return i;
 }
 
-int IeeeUtil::insertCanFramesToAvtp(uint8_t* pdu, frame_t *can_frames,
+int AvtpUtil::insertCanFramesToAvtp(uint8_t* pdu, frame_t *can_frames,
     uint8_t num_acf_msgs, uint8_t cf_seq_num)
 {
   // Pack into control formats
@@ -123,26 +123,26 @@ int IeeeUtil::insertCanFramesToAvtp(uint8_t* pdu, frame_t *can_frames,
 
   // Prepare the control format: TSCF/NTSCF
   cf_pdu = pdu + pdu_length;
-  res = IeeeUtil::initCfPdu(cf_pdu, use_tscf, cf_seq_num++);
+  res = AvtpUtil::initCfPdu(cf_pdu, use_tscf, cf_seq_num++);
   pdu_length += res;
   cf_length += res;
 
   int i = 0;
   while (i < num_acf_msgs) {
       uint8_t* acf_pdu = pdu + pdu_length;
-      res = IeeeUtil::prepareAcfPacket(acf_pdu, &(can_frames[i]), USER_CAN_VARIANT);
+      res = AvtpUtil::prepareAcfPacket(acf_pdu, &(can_frames[i]), USER_CAN_VARIANT);
       pdu_length += res;
       cf_length += res;
       i++;
   }
 
   // Update the length of the PDU
-  IeeeUtil::updateCfLength(cf_pdu, cf_length, use_tscf);
+  AvtpUtil::updateCfLength(cf_pdu, cf_length, use_tscf);
 
   return pdu_length;
 }
 
-int IeeeUtil::isValidAcfPacket(uint8_t *acf_pdu)
+int AvtpUtil::isValidAcfPacket(uint8_t *acf_pdu)
 {
     Avtp_AcfCommon_t *pdu = (Avtp_AcfCommon_t*) acf_pdu;
     uint8_t acf_msg_type = Avtp_AcfCommon_GetAcfMsgType(pdu);
@@ -153,7 +153,7 @@ int IeeeUtil::isValidAcfPacket(uint8_t *acf_pdu)
     return 1;
 }
 
-int IeeeUtil::initCfPdu(uint8_t* pdu, int use_tscf, int seq_num)
+int AvtpUtil::initCfPdu(uint8_t* pdu, int use_tscf, int seq_num)
 {
     int res;
     if (use_tscf) {
@@ -175,7 +175,7 @@ int IeeeUtil::initCfPdu(uint8_t* pdu, int use_tscf, int seq_num)
     return res;
 }
 
-int IeeeUtil::updateCfLength(uint8_t* cf_pdu, uint64_t length, int use_tscf)
+int AvtpUtil::updateCfLength(uint8_t* cf_pdu, uint64_t length, int use_tscf)
 {
     if (use_tscf) {
         uint64_t payloadLen = length - AVTP_TSCF_HEADER_LEN;
@@ -187,7 +187,7 @@ int IeeeUtil::updateCfLength(uint8_t* cf_pdu, uint64_t length, int use_tscf)
     return 0;
 }
 
-int IeeeUtil::prepareAcfPacket(uint8_t* acf_pdu, frame_t* frame, Avtp_CanVariant_t can_variant)
+int AvtpUtil::prepareAcfPacket(uint8_t* acf_pdu, frame_t* frame, Avtp_CanVariant_t can_variant)
 {
   struct timespec now;
   canid_t can_id = 0U;
@@ -244,7 +244,7 @@ int IeeeUtil::prepareAcfPacket(uint8_t* acf_pdu, frame_t* frame, Avtp_CanVariant
   return Avtp_Can_GetAcfMsgLength(pdu)*4;
 }
 
-Avtp_CanVariant_t IeeeUtil::getCanVariant(int can_variant)
+Avtp_CanVariant_t AvtpUtil::getCanVariant(int can_variant)
 {
   if (can_variant == 0) {
     return AVTP_CAN_CLASSIC;

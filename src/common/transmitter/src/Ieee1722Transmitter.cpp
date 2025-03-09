@@ -13,7 +13,7 @@ extern "C" {
 
 #include "Ieee1722Transmitter.hpp"
 #include "CommonUtils.hpp"
-#include "IeeeUtil.hpp"
+#include "AvtpUtil.hpp"
 
 #define CAN_PAYLOAD_MAX_SIZE        16*4
 #define MAX_ETH_PDU_SIZE                1500
@@ -148,7 +148,7 @@ void Ieee1722Transmitter::run()
       }
 
       // Pack all the read frames into an AVTP frame
-      pdu_length = IeeeUtil::insertCanFramesToAvtp(pdu, can_frames,
+      pdu_length = AvtpUtil::insertCanFramesToAvtp(pdu, can_frames,
                                   num_acf_msgs, cf_seq_num++);
 
       // Send the packed frame out
@@ -169,7 +169,7 @@ void Ieee1722Transmitter::publish(frame_t *can_frames, uint8_t num_acf_msgs)
   uint16_t pdu_length = 0;
 
   // Pack all the read frames into an AVTP frame
-  pdu_length = IeeeUtil::insertCanFramesToAvtp(pdu, can_frames,
+  pdu_length = AvtpUtil::insertCanFramesToAvtp(pdu, can_frames,
                               num_acf_msgs, cf_seq_num++);
 
   // Send the packed frame out

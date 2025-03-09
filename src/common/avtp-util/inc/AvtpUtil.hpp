@@ -10,13 +10,13 @@ extern "C" {
 #define STREAM_ID                       0xAABBCCDDEEFF0001
 #define USER_CAN_VARIANT                AVTP_CAN_FD
 
-class IeeeUtil final
+class AvtpUtil final
 {
 private:
 
-  IeeeUtil() = delete;
+  AvtpUtil() = delete;
 
-  ~IeeeUtil() = delete;
+  ~AvtpUtil() = delete;
 
 public:
 

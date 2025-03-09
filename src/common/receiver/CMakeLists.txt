@@ -1,0 +1,29 @@
+project(IeeeCan_Project)
+
+add_library(receiver STATIC
+  "src/Ieee1722Receiver.cpp"
+)
+
+target_include_directories(receiver
+  PUBLIC
+    ${CMAKE_CURRENT_SOURCE_DIR}/inc
+)
+
+target_link_libraries(receiver
+  comm_if
+  avtp_util
+  common_utils
+)
+
+add_executable(test_receiver
+  "src/main_rx.cpp"
+)
+
+target_include_directories(test_receiver
+  PUBLIC
+    ${CMAKE_CURRENT_SOURCE_DIR}/inc
+)
+
+target_link_libraries(test_receiver
+  receiver
+)
