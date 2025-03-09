@@ -38,7 +38,7 @@
 #include <string.h>
 #include <stdio.h>
 
-#include "can_common.h"
+#include "can_comm_if.h"
 
 int Comm_Can_SetupSocket(const char* can_ifname, uint8_t can_variant) {
 

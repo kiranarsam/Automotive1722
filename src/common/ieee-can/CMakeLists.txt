@@ -12,7 +12,7 @@ target_include_directories(ieee1722
 )
 
 target_link_libraries(ieee1722
-  comm_conn
+  comm_if
   open1722
   common_utils
 )

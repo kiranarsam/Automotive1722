@@ -28,8 +28,8 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#ifndef COMM_CAN_COMMON_H__
-#define COMM_CAN_COMMON_H__
+#ifndef CAN_COMM_IF_COMMON_H__
+#define CAN_COMM_IF_COMMON_H__
 
 #include <stdint.h>
 
@@ -45,4 +45,4 @@
  */
 int Comm_Can_SetupSocket(const char* can_ifname, uint8_t can_variant);
 
-#endif
+#endif /* CAN_COMM_IF_COMMON_H__ */

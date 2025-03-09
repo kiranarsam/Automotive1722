@@ -40,7 +40,7 @@
 #include <time.h>
 #include <unistd.h>
 
-#include "ether_common.h"
+#include "ether_comm_if.h"
 
 #define NSEC_PER_SEC		1000000000ULL
 #define NSEC_PER_MSEC		1000000ULL

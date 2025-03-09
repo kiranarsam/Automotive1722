@@ -28,8 +28,8 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#ifndef COMM_ETHER_COMMON_H__
-#define COMM_ETHER_COMMON_H__
+#ifndef ETHER_COMM_IF_COMMON_H__
+#define ETHER_COMM_IF_COMMON_H__
 
 #include <stdint.h>
 #include <netinet/in.h>
@@ -111,4 +111,4 @@ int Comm_Ether_CreateTalkerSocket(int priority);
 int Comm_Ether_SetupSocketAddress(int fd, const char *ifname, uint8_t macaddr[],
                 int protocol, struct sockaddr_ll *sk_addr);
 
-#endif /* COMM_ETHER_COMMON_H__ */
+#endif /* ETHER_COMM_IF_COMMON_H__ */

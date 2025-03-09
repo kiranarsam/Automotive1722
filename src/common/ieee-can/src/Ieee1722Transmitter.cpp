@@ -4,8 +4,8 @@
 #include <unistd.h>
 
 extern "C" {
-  #include "ether_common.h"
-  #include "can_common.h"
+  #include "ether_comm_if.h"
+  #include "can_comm_if.h"
 }
 
 #include <iostream>
