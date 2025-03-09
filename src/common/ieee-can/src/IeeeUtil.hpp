@@ -5,7 +5,6 @@ extern "C" {
 #include "avtp/acf/Can.h"
 }
 
-#include <string>
 #include "IeeeCanCommon.hpp"
 
 #define STREAM_ID                       0xAABBCCDDEEFF0001
@@ -24,8 +23,6 @@ public:
   static int extractCanFramesFromAvtp(uint8_t* pdu, frame_t* can_frames, uint8_t* exp_cf_seqnum);
 
   static int insertCanFramesToAvtp(uint8_t* pdu, frame_t *can_frames, uint8_t num_acf_msgs, uint8_t cf_seq_num);
-
-  static int getMacAddress(std::string &macaddr, uint8_t *address);
 
 private:
   static int isValidAcfPacket(uint8_t *acf_pdu);

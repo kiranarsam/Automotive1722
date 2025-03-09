@@ -13,6 +13,7 @@ extern "C" {
 #include <functional>
 
 #include "Ieee1722Receiver.hpp"
+#include "CommonUtils.hpp"
 #include "IeeeUtil.hpp"
 
 
@@ -37,7 +38,7 @@ void Ieee1722Receiver::init()
     int res = -1;
     uint8_t addr[ETH_ALEN];
 
-    res = IeeeUtil::getMacAddress(m_macaddr, addr);
+    res = CommonUtils::getMacAddress(m_macaddr, addr);
     if(res < 0) {
       std::cout << "Invalid mac address" << std::endl;
       return;

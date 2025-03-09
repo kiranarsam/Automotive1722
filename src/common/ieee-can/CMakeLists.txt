@@ -14,6 +14,7 @@ target_include_directories(ieee1722
 target_link_libraries(ieee1722
   comm_conn
   open1722
+  common_utils
 )
 
 add_executable(test_receiver

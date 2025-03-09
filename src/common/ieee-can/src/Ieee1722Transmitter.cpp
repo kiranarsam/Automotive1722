@@ -12,6 +12,7 @@ extern "C" {
 #include <functional>
 
 #include "Ieee1722Transmitter.hpp"
+#include "CommonUtils.hpp"
 #include "IeeeUtil.hpp"
 
 #define CAN_PAYLOAD_MAX_SIZE        16*4
@@ -36,7 +37,7 @@ void Ieee1722Transmitter::init()
     int res = -1;
     uint8_t addr[ETH_ALEN];
 
-    res = IeeeUtil::getMacAddress(m_macaddr, addr);
+    res = CommonUtils::getMacAddress(m_macaddr, addr);
     if(res < 0) {
       std::cout << "Invalid mac address" << std::endl;
       return;
