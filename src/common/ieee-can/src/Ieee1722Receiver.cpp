@@ -2,9 +2,9 @@
 
 /* System files */
 #include <linux/if_ether.h>
+#include <unistd.h>
 
 extern "C" {
-#include <unistd.h>
 #include "ether_common.h"
 #include "can_common.h"
 }

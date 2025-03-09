@@ -175,7 +175,7 @@ err:
     return -1;
 }
 
-int Comm_Ether_CreateListenerSocket(char *ifname, uint8_t* macaddr, int protocol)
+int Comm_Ether_CreateListenerSocket(const char *ifname, uint8_t* macaddr, int protocol)
 {
     int fd, res;
     struct sockaddr_ll sk_addr;

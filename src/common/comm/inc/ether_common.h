@@ -85,7 +85,7 @@ int Comm_Ether_ArmTimer(int fd, struct timespec *tspec);
  *    >= 0: Socket file descriptor. Should be closed with close() when done.
  *    -1: Could not create socket.
  */
-int Comm_Ether_CreateListenerSocket(char *ifname, uint8_t macaddr[], int protocol);
+int Comm_Ether_CreateListenerSocket(const char *ifname, uint8_t macaddr[], int protocol);
 
 /* Create TSN socket to send packets.
  * @priority: SO_PRIORITY to be set in socket.

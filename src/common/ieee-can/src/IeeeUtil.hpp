@@ -6,7 +6,6 @@ extern "C" {
 }
 
 #include <string>
-
 #include "IeeeCanCommon.hpp"
 
 #define STREAM_ID                       0xAABBCCDDEEFF0001

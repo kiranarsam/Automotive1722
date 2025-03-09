@@ -2,22 +2,20 @@
 
 /* System files */
 #include <poll.h>
-#include <arpa/inet.h>
-#include <linux/if.h>
-#include <linux/if_ether.h>
-#include <linux/if_packet.h>
-#include <sys/ioctl.h>
 #include <sys/socket.h>
-#include <sys/timerfd.h>
-#include <sys/types.h>
+#include <linux/if_packet.h>
 
 #include <string>
 #include <thread>
 
+#include "IeeeCanCommon.hpp"
+
 class Ieee1722Transmitter
 {
 public:
-  Ieee1722Transmitter();
+
+  Ieee1722Transmitter(std::string &ifname, std::string &macaddr);
+
   ~Ieee1722Transmitter();
 
   void init();
@@ -25,6 +23,8 @@ public:
   void start();
 
   void stop();
+
+  void publish(frame_t *can_frames, uint8_t num_acf_msgs);
 
 private:
 
@@ -49,6 +49,8 @@ private:
   bool m_running;
 
   struct pollfd m_poll_fds;
+
+  struct sockaddr_ll sk_ll_addr;
 
   struct sockaddr* m_dest_addr;
 

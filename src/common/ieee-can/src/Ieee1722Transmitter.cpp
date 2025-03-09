@@ -1,9 +1,9 @@
 
 /* System files */
 #include <linux/if_ether.h>
+#include <unistd.h>
 
 extern "C" {
-  #include <unistd.h>
   #include "ether_common.h"
   #include "can_common.h"
 }
@@ -15,10 +15,13 @@ extern "C" {
 #include "IeeeUtil.hpp"
 
 #define CAN_PAYLOAD_MAX_SIZE        16*4
+#define MAX_ETH_PDU_SIZE                1500
 
-Ieee1722Transmitter::Ieee1722Transmitter()
+Ieee1722Transmitter::Ieee1722Transmitter(std::string &ifname, std::string &macaddr)
+  : m_ifname{ifname}, m_macaddr{macaddr}
 {
-
+  m_is_can_enabled = false;
+  init();
 }
 
 Ieee1722Transmitter::~Ieee1722Transmitter()
@@ -45,8 +48,7 @@ void Ieee1722Transmitter::init()
       return;
     }
 
-    struct sockaddr_ll sk_ll_addr;
-    res = Comm_Ether_SetupSocketAddress(m_eth_fd, m_ifname, addr,
+    res = Comm_Ether_SetupSocketAddress(m_eth_fd, m_ifname.c_str(), addr,
                                 ETH_P_TSN, &sk_ll_addr);
     m_dest_addr = (struct sockaddr*) &sk_ll_addr;
     if (res < 0) {
@@ -56,7 +58,7 @@ void Ieee1722Transmitter::init()
 
     // Open a CAN socket for reading frames
     if(m_is_can_enabled) {
-      m_can_socket = Comm_Can_SetupSocket(m_can_ifname, USER_CAN_VARIANT);
+      m_can_socket = Comm_Can_SetupSocket(m_can_ifname.c_str(), USER_CAN_VARIANT);
       if (m_can_socket < 0) {
         std::cout << "Failure to create talker can socket" << std::endl;
         return;
@@ -72,7 +74,7 @@ void Ieee1722Transmitter::start()
 {
   if(m_is_initialized && m_is_can_enabled) {
     m_running = true;
-    m_transmitter_thread = std::thread{&std::bind(&Ieee1722Transmitter::run, this)};
+    m_transmitter_thread = std::thread{std::bind(&Ieee1722Transmitter::run, this)};
   }
 }
 
@@ -155,5 +157,24 @@ void Ieee1722Transmitter::run()
           std::cout << "Failed to send data from talker" << std::endl;
       }
     }
+  }
+}
+
+void Ieee1722Transmitter::publish(frame_t *can_frames, uint8_t num_acf_msgs)
+{
+  int res = 0;
+  uint8_t cf_seq_num = 0;
+  uint8_t pdu[MAX_ETH_PDU_SIZE];
+  uint16_t pdu_length = 0;
+
+  // Pack all the read frames into an AVTP frame
+  pdu_length = IeeeUtil::insertCanFramesToAvtp(pdu, can_frames,
+                              num_acf_msgs, cf_seq_num++);
+
+  // Send the packed frame out
+  res = sendto(m_eth_fd, pdu, pdu_length, 0,
+                (struct sockaddr *) m_dest_addr, sizeof(struct sockaddr_ll));
+  if (res < 0) {
+      std::cout << "Failed to send data from talker" << std::endl;
   }
 }

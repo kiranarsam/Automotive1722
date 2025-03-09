@@ -1,5 +1,6 @@
 
 /* System defines */
+#include <linux/if_ether.h>
 #include <linux/if_packet.h>
 #include <arpa/inet.h>
 #include <linux/if.h>
