@@ -2,7 +2,7 @@
 #include <condition_variable>
 #include <csignal>
 
-#include "Ieee1722Receiver.hpp"
+#include "Receiver.hpp"
 
 std::mutex g_mutex;
 std::condition_variable g_cond_var;
@@ -23,7 +23,7 @@ int main() {
 
   std::string ifname {"ens160"};
   std::string macaddr {"00:50:56:b0:74:a4"};
-  Ieee1722Receiver receiver{ifname, macaddr};
+  Receiver receiver{ifname, macaddr};
   receiver.init();
   receiver.start();
 

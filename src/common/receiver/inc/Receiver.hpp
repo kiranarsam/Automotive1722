@@ -8,13 +8,13 @@
 
 #include "CanWriter.hpp"
 
-class Ieee1722Receiver
+class Receiver
 {
 public:
 
-  Ieee1722Receiver(std::string &ifname, std::string &macaddr);
+  Receiver(std::string &ifname, std::string &macaddr);
 
-  ~Ieee1722Receiver();
+  ~Receiver();
 
   void init();
 

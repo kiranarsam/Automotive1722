@@ -9,14 +9,15 @@
 #include <thread>
 
 #include "IeeeCanCommon.hpp"
+#include "CanReader.hpp"
 
-class Ieee1722Transmitter
+class Transmitter
 {
 public:
 
-  Ieee1722Transmitter(std::string &ifname, std::string &macaddr);
+  Transmitter(std::string &ifname, std::string &macaddr);
 
-  ~Ieee1722Transmitter();
+  ~Transmitter();
 
   void init();
 
@@ -38,8 +39,6 @@ private:
 
   int m_eth_fd;
 
-  int m_can_socket;
-
   bool m_is_initialized;
 
   bool m_is_can_enabled;
@@ -53,5 +52,7 @@ private:
   struct sockaddr_ll sk_ll_addr;
 
   struct sockaddr* m_dest_addr;
+
+  CanReader m_can_reader;
 
 };

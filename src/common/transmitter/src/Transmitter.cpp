@@ -11,26 +11,26 @@ extern "C" {
 #include <iostream>
 #include <functional>
 
-#include "Ieee1722Transmitter.hpp"
+#include "Transmitter.hpp"
 #include "CommonUtils.hpp"
 #include "AvtpUtil.hpp"
 
 #define CAN_PAYLOAD_MAX_SIZE        16*4
 #define MAX_ETH_PDU_SIZE                1500
 
-Ieee1722Transmitter::Ieee1722Transmitter(std::string &ifname, std::string &macaddr)
+Transmitter::Transmitter(std::string &ifname, std::string &macaddr)
   : m_ifname{ifname}, m_macaddr{macaddr}
 {
   m_is_can_enabled = false;
   init();
 }
 
-Ieee1722Transmitter::~Ieee1722Transmitter()
+Transmitter::~Transmitter()
 {
 
 }
 
-void Ieee1722Transmitter::init()
+void Transmitter::init()
 {
   if(!m_is_initialized) {
 
@@ -59,11 +59,7 @@ void Ieee1722Transmitter::init()
 
     // Open a CAN socket for reading frames
     if(m_is_can_enabled) {
-      m_can_socket = Comm_Can_SetupSocket(m_can_ifname.c_str(), USER_CAN_VARIANT);
-      if (m_can_socket < 0) {
-        std::cout << "Failure to create talker can socket" << std::endl;
-        return;
-      }
+      m_can_reader.init(m_can_ifname, CAN_VARIANT_FD);
     }
 
     m_is_initialized = true;
@@ -71,15 +67,15 @@ void Ieee1722Transmitter::init()
   }
 }
 
-void Ieee1722Transmitter::start()
+void Transmitter::start()
 {
   if(m_is_initialized && m_is_can_enabled) {
     m_running = true;
-    m_transmitter_thread = std::thread{std::bind(&Ieee1722Transmitter::run, this)};
+    m_transmitter_thread = std::thread{std::bind(&Transmitter::run, this)};
   }
 }
 
-void Ieee1722Transmitter::stop()
+void Transmitter::stop()
 {
   m_running = false;
 
@@ -93,11 +89,11 @@ void Ieee1722Transmitter::stop()
       m_transmitter_thread.detach();
     }
 
-    close(m_can_socket);
+    m_can_reader.stop();
   }
 }
 
-void Ieee1722Transmitter::run()
+void Transmitter::run()
 {
   int res = 0;
   uint8_t cf_seq_num = 0;
@@ -107,7 +103,7 @@ void Ieee1722Transmitter::run()
   uint8_t num_acf_msgs = 1U;
   frame_t can_frames[num_acf_msgs];
 
-  m_poll_fds.fd = m_can_socket;
+  m_poll_fds.fd = m_can_reader.getCanSocket();
   m_poll_fds.events = POLLIN;
 
   while(m_running) {
@@ -131,21 +127,7 @@ void Ieee1722Transmitter::run()
 
     if (m_poll_fds.revents & POLLIN) {
       // Read acf_num_msgs number of CAN frames from the CAN socket
-      int i = 0;
-      while (i < num_acf_msgs) {
-          // Get payload -- will 'spin' here until we get the requested number
-          //                of CAN frames.
-          if(USER_CAN_VARIANT == AVTP_CAN_FD){
-              res = read(m_can_socket, &(can_frames[i].fd), sizeof(struct canfd_frame));
-          } else {
-              res = read(m_can_socket, &(can_frames[i].cc), sizeof(struct can_frame));
-          }
-          if (!res) {
-              std::cout << "Error reading CAN frames" << std::endl;
-              continue;
-          }
-          i++;
-      }
+      m_can_reader.receiveData(can_frames, num_acf_msgs);
 
       // Pack all the read frames into an AVTP frame
       pdu_length = AvtpUtil::insertCanFramesToAvtp(pdu, can_frames,
@@ -161,7 +143,7 @@ void Ieee1722Transmitter::run()
   }
 }
 
-void Ieee1722Transmitter::publish(frame_t *can_frames, uint8_t num_acf_msgs)
+void Transmitter::publish(frame_t *can_frames, uint8_t num_acf_msgs)
 {
   int res = 0;
   uint8_t cf_seq_num = 0;

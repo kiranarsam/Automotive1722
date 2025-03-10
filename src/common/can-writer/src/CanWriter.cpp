@@ -1,6 +1,7 @@
 
 #include "CanWriter.hpp"
 
+/* System header files */
 #include <unistd.h>
 
 extern "C" {

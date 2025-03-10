@@ -6,7 +6,7 @@
 
 #include <cstring>
 
-#include "Ieee1722Transmitter.hpp"
+#include "Transmitter.hpp"
 
 std::mutex g_mutex;
 std::condition_variable g_cond_var;
@@ -31,7 +31,7 @@ int main() {
 
   std::string ifname {"ens160"};
   std::string macaddr {"00:50:56:b0:74:a4"};
-  Ieee1722Transmitter transmitter{ifname, macaddr};
+  Transmitter transmitter{ifname, macaddr};
   transmitter.init();
   transmitter.start();
 

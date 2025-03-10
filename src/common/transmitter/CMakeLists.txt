@@ -1,7 +1,7 @@
-project(IeeeCan_Project)
+project(Transmitter_Project)
 
 add_library(transmitter STATIC
-  "src/Ieee1722Transmitter.cpp"
+  "src/Transmitter.cpp"
 )
 
 target_include_directories(transmitter
@@ -13,6 +13,7 @@ target_link_libraries(transmitter
   comm_if
   avtp_util
   common_utils
+  canreader
 )
 
 add_executable(test_transmitter

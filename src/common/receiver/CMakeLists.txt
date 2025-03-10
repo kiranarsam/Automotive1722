@@ -1,7 +1,7 @@
-project(IeeeCan_Project)
+project(Receiver_Project)
 
 add_library(receiver STATIC
-  "src/Ieee1722Receiver.cpp"
+  "src/Receiver.cpp"
 )
 
 target_include_directories(receiver

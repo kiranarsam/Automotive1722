@@ -12,7 +12,7 @@ extern "C" {
 #include <iostream>
 #include <functional>
 
-#include "Ieee1722Receiver.hpp"
+#include "Receiver.hpp"
 #include "CommonUtils.hpp"
 #include "AvtpUtil.hpp"
 
@@ -20,19 +20,19 @@ extern "C" {
 #define MAX_ETH_PDU_SIZE                1500
 #define MAX_CAN_FRAMES_IN_ACF           15
 
-Ieee1722Receiver::Ieee1722Receiver(std::string &ifname, std::string &macaddr)
+Receiver::Receiver(std::string &ifname, std::string &macaddr)
   : m_ifname{ifname}, m_macaddr{macaddr}
 {
   m_is_can_enabled = false;
   init();
 }
 
-Ieee1722Receiver::~Ieee1722Receiver()
+Receiver::~Receiver()
 {
 
 }
 
-void Ieee1722Receiver::init()
+void Receiver::init()
 {
   if (!m_is_initialized) {
     int res = -1;
@@ -60,15 +60,15 @@ void Ieee1722Receiver::init()
   }
 }
 
-void Ieee1722Receiver::start()
+void Receiver::start()
 {
   if(m_is_initialized) {
     m_running = true;
-    m_receiver_thread = std::thread{std::bind(&Ieee1722Receiver::run, this)};
+    m_receiver_thread = std::thread{std::bind(&Receiver::run, this)};
   }
 }
 
-void Ieee1722Receiver::stop()
+void Receiver::stop()
 {
   m_running = false;
   if (std::this_thread::get_id() != m_receiver_thread.get_id()) {
@@ -85,7 +85,7 @@ void Ieee1722Receiver::stop()
   }
 }
 
-void Ieee1722Receiver::run()
+void Receiver::run()
 {
   int res = 0;
   uint16_t pdu_length = 0;
