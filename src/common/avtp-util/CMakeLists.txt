@@ -7,6 +7,7 @@ add_library(avtp_util STATIC
 target_include_directories(avtp_util
   PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/inc
+    ${CMAKE_CURRENT_SOURCE_DIR}/../inc
 )
 
 target_link_libraries(avtp_util

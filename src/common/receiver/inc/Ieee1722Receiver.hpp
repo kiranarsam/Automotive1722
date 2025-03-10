@@ -6,6 +6,8 @@
 #include <string>
 #include <thread>
 
+#include "CanWriter.hpp"
+
 class Ieee1722Receiver
 {
 public:
@@ -32,8 +34,6 @@ private:
 
   int m_eth_fd;
 
-  int m_can_socket;
-
   bool m_is_initialized;
 
   bool m_is_can_enabled;
@@ -43,4 +43,6 @@ private:
   bool m_running;
 
   struct pollfd m_poll_fds;
+
+  CanWriter m_can_writer;
 };

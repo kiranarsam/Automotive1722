@@ -13,6 +13,7 @@ target_link_libraries(receiver
   comm_if
   avtp_util
   common_utils
+  canwriter
 )
 
 add_executable(test_receiver

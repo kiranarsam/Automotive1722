@@ -52,11 +52,7 @@ void Ieee1722Receiver::init()
 
     // Open a CAN socket for reading frames
     if(m_is_can_enabled) {
-      m_can_socket = Comm_Can_SetupSocket(m_can_ifname.c_str(), CAN_VARIANT_FD);
-      if (m_can_socket < 0) {
-        std::cout << "Failure to create can socket " << std::endl;
-        return;
-      }
+      m_can_writer.init(m_can_ifname, CAN_VARIANT_FD);
     }
 
     m_is_initialized = true;
@@ -85,7 +81,7 @@ void Ieee1722Receiver::stop()
   }
 
   if(m_is_can_enabled) {
-    close(m_can_socket);
+    m_can_writer.stop();
   }
 }
 
@@ -135,24 +131,11 @@ void Ieee1722Receiver::run()
 
       exp_cf_seqnum++;
 
-      if(!m_is_can_enabled) {
-        continue;
+      if(m_is_can_enabled) {
+        m_can_writer.sendData(can_frames, num_can_msgs);
       }
-
-      for (int i = 0; i < num_can_msgs; i++) {
-          // TODO
-          Avtp_CanVariant_t can_variant = AVTP_CAN_FD;
-
-          if (can_variant == AVTP_CAN_FD) {
-              res = write(m_can_socket, &can_frames[i].fd, sizeof(struct canfd_frame));
-          } else if (can_variant == AVTP_CAN_CLASSIC) {
-              res = write(m_can_socket, &can_frames[i].cc, sizeof(struct can_frame));
-          }
-
-          if(res < 0) {
-              std::cout << "Failed to write to CAN bus" << std::endl;
-              continue;
-          }
+      else {
+        continue;
       }
     }
   }
