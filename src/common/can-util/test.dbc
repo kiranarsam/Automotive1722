@@ -1,0 +1,25 @@
+VERSION "created by canmatrix"
+
+
+NS_ :
+
+BS_:
+
+BU_:
+
+
+BO_ 111 ID_frame_01: 8 ECU_A
+ SG_ SIG_ID01_01 : 1|2@0+ (1.0,0.0) [0|3] "" Receiver
+ SG_ SIG_ID01_02 : 7|6@0+ (1.0,0.0) [0|0] "" Receiver
+ SG_ SIG_ID01_03 : 15|11@0+ (1.0,0.0) [1|1000] "" Receiver
+ SG_ SIG_ID01_04 : 58|3@0+ (1.0,0.0) [0|0] "" Receiver
+ SG_ SIG_ID01_05 : 61|3@0+ (1.0,0.0) [0|0] "" Receiver
+ SG_ SIG_ID01_06 : 63|2@0+ (1.0,0.0) [0|0] "" Receiver
+
+BO_ 222 ID_frame_02: 8 ECU_B
+ SG_ SIG_ID02_01 : 60|2@1+ (1.0,0.0) [0|0] "" Receiver
+ SG_ SIG_ID02_02 : 55|1@1+ (1.0,0.0) [0|0] "" Receiver
+ SG_ SIG_ID02_03 : 52|3@1+ (1.0,0.0) [0|0] "" Receiver
+ SG_ SIG_ID02_04 : 8|12@1+ (1.0,0.0) [0|0] "" Receiver
+ SG_ SIG_ID02_05 : 24|10@1- (1.0,0.0) [0|0] "" Receiver
+ SG_ SIG_ID02_06 : 0|8@1+ (1.0,0.0) [0|0] "" Receiver
