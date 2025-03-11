@@ -10,7 +10,7 @@ add_subdirectory(can-writer)
 add_subdirectory(can-reader)
 add_subdirectory(can-codec)
 
-add_subdirectory(ieee-can)
+add_subdirectory(data-router)
 add_subdirectory(can-util)
 add_subdirectory(settings)
 add_subdirectory(logger)
