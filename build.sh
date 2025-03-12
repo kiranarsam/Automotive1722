@@ -27,12 +27,13 @@ done
 [ -z "$BUILD_TARGET" ] && BUILD_TARGET="x86_64"
 
 BUILD_DIR="$SCRIPT_DIR/build/$BUILD_TARGET/$BUILD_TYPE"
+SYSTEM_PROCESSOR=$(uname -p)
 
 cmake -E make_directory "$BUILD_DIR"
 
 cd "$BUILD_DIR" || exit
 
-cmake "$SCRIPT_DIR" -DCMAKE_INSTALL_PREFIX="$BUILD_DIR/install" -DCMAKE_TOOLCHAIN_FILE="$SCRIPT_DIR/target/$BUILD_TARGET.toolchain"
+cmake "$SCRIPT_DIR" -DCMAKE_INSTALL_PREFIX="$BUILD_DIR/install" -DCMAKE_SYSTEM_PROCESSOR="$SYSTEM_PROCESSOR" -DCMAKE_TOOLCHAIN_FILE="$SCRIPT_DIR/target/$BUILD_TARGET.toolchain"
 
 cmake --build . -j "$(nproc)"
 if [ $? -ne 0 ]; then

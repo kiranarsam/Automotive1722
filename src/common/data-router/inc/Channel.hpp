@@ -30,15 +30,16 @@
 
 #pragma once
 
-#include <map>
+#include <string>
 #include <memory>
-#include "Channel.hpp"
+#include "Receiver.hpp"
+#include "Transmitter.hpp"
 
-class DataRouter
+class Channel
 {
 public:
-  DataRouter();
-  ~DataRouter();
+  Channel(std::string &ifname, std::string &macaddr);
+  ~Channel();
 
   void start();
 
@@ -48,7 +49,9 @@ private:
 
   void init();
 
-  std::map<std::string, std::shared_ptr<Channel>> m_channels;
+  std::string m_ifname;
+  std::string m_macaddr;
+  std::shared_ptr<Receiver> m_receiver;
+  std::shared_ptr<Transmitter> m_transmitter;
   bool m_is_initialized;
-
 };

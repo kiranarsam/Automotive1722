@@ -28,27 +28,38 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
-
-#include <map>
-#include <memory>
 #include "Channel.hpp"
 
-class DataRouter
+Channel::Channel(std::string &ifname, std::string &macaddr)
+  : m_ifname{ifname}, m_macaddr{macaddr}, m_receiver{nullptr}, m_transmitter{nullptr}, m_is_initialized{false}
 {
-public:
-  DataRouter();
-  ~DataRouter();
+  init();
+}
 
-  void start();
+Channel::~Channel()
+{
 
-  void stop();
+}
 
-private:
+void Channel::init()
+{
+  if(!m_is_initialized) {
+    m_receiver = std::make_shared<Receiver>(m_ifname, m_macaddr);
+    m_transmitter = std::make_shared<Transmitter>(m_ifname, m_macaddr);
 
-  void init();
+    m_is_initialized = true;
+  }
+}
 
-  std::map<std::string, std::shared_ptr<Channel>> m_channels;
-  bool m_is_initialized;
+void Channel::start()
+{
+  m_receiver->start();
+  m_transmitter->start();
+}
 
-};
+void Channel::stop()
+{
+  m_is_initialized = false;
+  m_receiver->stop();
+  m_transmitter->stop();
+}
