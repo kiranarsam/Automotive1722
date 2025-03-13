@@ -31,8 +31,10 @@
 #include <mutex>
 #include <condition_variable>
 #include <csignal>
+#include <iostream>
 
 #include "Receiver.hpp"
+#include "DataCallbackHandler.hpp"
 
 std::mutex g_mutex;
 std::condition_variable g_cond_var;
@@ -49,12 +51,20 @@ void handleSignal(int sig)
   }
 }
 
+void callbackHandler(int data) {
+  std::cout << "handler: received = " << data << std::endl;
+}
+
 int main() {
 
   std::string ifname {"ens160"};
   std::string macaddr {"00:50:56:b0:74:a4"};
   Receiver receiver{ifname, macaddr};
-  receiver.init();
+
+  DataCallbackHandler handler;
+  handler.registerCallback(&callbackHandler);
+
+  receiver.setCallbackHandler(handler);
   receiver.start();
 
   std::signal(SIGINT, handleSignal);

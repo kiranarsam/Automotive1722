@@ -37,6 +37,7 @@
 #include <thread>
 
 #include "CanWriter.hpp"
+#include "DataCallbackHandler.hpp"
 
 class Receiver
 {
@@ -47,6 +48,8 @@ public:
   ~Receiver();
 
   void init();
+
+  void setCallbackHandler(DataCallbackHandler &handler);
 
   void start();
 
@@ -75,4 +78,6 @@ private:
   struct pollfd m_poll_fds;
 
   CanWriter m_can_writer;
+
+  DataCallbackHandler m_callback_handler;
 };

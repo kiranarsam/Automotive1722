@@ -45,6 +45,8 @@ public:
 
   void stop();
 
+  void setCallbackHandler(DataCallbackHandler &handler);
+
 private:
 
   void init();

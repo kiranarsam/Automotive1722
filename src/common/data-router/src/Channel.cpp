@@ -51,6 +51,11 @@ void Channel::init()
   }
 }
 
+void Channel::setCallbackHandler(DataCallbackHandler &handler)
+{
+  m_receiver->setCallbackHandler(handler);
+}
+
 void Channel::start()
 {
   m_receiver->start();

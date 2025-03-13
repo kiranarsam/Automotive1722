@@ -88,6 +88,11 @@ void Receiver::init()
   }
 }
 
+void Receiver::setCallbackHandler(DataCallbackHandler &handler)
+{
+  m_callback_handler = handler;
+}
+
 void Receiver::start()
 {
   if(m_is_initialized) {
@@ -159,11 +164,10 @@ void Receiver::run()
 
       exp_cf_seqnum++;
 
+      m_callback_handler.handleCallback(2025);
+
       if(m_is_can_enabled) {
         m_can_writer.sendData(can_frames, num_can_msgs);
-      }
-      else {
-        continue;
       }
     }
   }

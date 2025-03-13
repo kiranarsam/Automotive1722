@@ -14,6 +14,7 @@ target_link_libraries(receiver
   avtp_util
   common_utils
   canwriter
+  datahandler
 )
 
 add_executable(test_receiver
