@@ -43,13 +43,15 @@ class Receiver
 {
 public:
 
-  Receiver(std::string &ifname, std::string &macaddr);
+  Receiver(const std::string &ifname, const std::string &macaddr);
 
   ~Receiver();
 
   void init();
 
-  void setCallbackHandler(DataCallbackHandler &handler);
+  void registerCallbackHandler(DataCallbackHandler &&handler);
+
+  void unRegisterCallbackHandler();
 
   void start();
 

@@ -32,20 +32,25 @@
 
 #include <string>
 #include <memory>
+#include "IChannel.hpp"
 #include "Receiver.hpp"
 #include "Transmitter.hpp"
 
-class Channel
+class Channel : public IChannel
 {
 public:
-  Channel(std::string &ifname, std::string &macaddr);
+  Channel(const std::string &ifname, const std::string &macaddr);
   ~Channel();
 
   void start();
 
   void stop();
 
-  void setCallbackHandler(DataCallbackHandler &handler);
+  void registerCallbackHandler(DataCallbackHandler &&handler);
+
+  void unRegisterCallbackHandler();
+
+  void sendFrames(frame_t *frames, uint8_t num_msgs);
 
 private:
 

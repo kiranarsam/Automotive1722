@@ -48,7 +48,7 @@ extern "C" {
 #define MAX_ETH_PDU_SIZE                1500
 #define MAX_CAN_FRAMES_IN_ACF           15
 
-Receiver::Receiver(std::string &ifname, std::string &macaddr)
+Receiver::Receiver(const std::string &ifname, const std::string &macaddr)
   : m_ifname{ifname}, m_macaddr{macaddr}
 {
   m_is_can_enabled = false;
@@ -88,9 +88,14 @@ void Receiver::init()
   }
 }
 
-void Receiver::setCallbackHandler(DataCallbackHandler &handler)
+void Receiver::registerCallbackHandler(DataCallbackHandler &&handler)
 {
-  m_callback_handler = handler;
+  m_callback_handler = std::move(handler);
+}
+
+void Receiver::unRegisterCallbackHandler()
+{
+  m_callback_handler.unRegisterCallback();
 }
 
 void Receiver::start()

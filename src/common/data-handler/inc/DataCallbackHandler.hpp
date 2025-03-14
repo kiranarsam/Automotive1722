@@ -10,6 +10,8 @@ public:
 
   void handleCallback(int);
 
+  void unRegisterCallback();
+
 private:
   std::function<void(int)> m_callback;
 };

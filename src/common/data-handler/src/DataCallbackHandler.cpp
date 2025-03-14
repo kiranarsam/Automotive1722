@@ -12,3 +12,8 @@ void DataCallbackHandler::handleCallback(int data)
     m_callback(data);
   }
 }
+
+void DataCallbackHandler::unRegisterCallback()
+{
+  m_callback = {};
+}

@@ -32,7 +32,7 @@
 
 #include <map>
 #include <memory>
-#include "Channel.hpp"
+#include "IChannel.hpp"
 
 class DataRouter
 {
@@ -44,11 +44,17 @@ public:
 
   void stop();
 
+  void registerDataCallbackHandler(const std::string &channel_name, DataCallbackHandler &&handler);
+
+  void unRegisterDataCallbackHandler(const std::string &channel_name);
+
+  void publishFrames(const std::string &channel_name, frame_t *frames, uint8_t num_msgs);
+
 private:
 
   void init();
 
-  std::map<std::string, std::shared_ptr<Channel>> m_channels;
+  std::map<std::string, std::shared_ptr<IChannel>> m_channels;
   bool m_is_initialized;
 
 };

@@ -30,7 +30,7 @@
 
 #include "Channel.hpp"
 
-Channel::Channel(std::string &ifname, std::string &macaddr)
+Channel::Channel(const std::string &ifname, const std::string &macaddr)
   : m_ifname{ifname}, m_macaddr{macaddr}, m_receiver{nullptr}, m_transmitter{nullptr}, m_is_initialized{false}
 {
   init();
@@ -51,9 +51,19 @@ void Channel::init()
   }
 }
 
-void Channel::setCallbackHandler(DataCallbackHandler &handler)
+void Channel::registerCallbackHandler(DataCallbackHandler &&handler)
 {
-  m_receiver->setCallbackHandler(handler);
+  m_receiver->registerCallbackHandler(std::move(handler));
+}
+
+void Channel::unRegisterCallbackHandler()
+{
+  m_receiver->unRegisterCallbackHandler();
+}
+
+void Channel::sendFrames(frame_t *frames, uint8_t num_msgs)
+{
+  m_transmitter->sendPacket(frames, num_msgs);
 }
 
 void Channel::start()

@@ -29,6 +29,7 @@
  */
 
 #include "DataRouter.hpp"
+#include "Channel.hpp"
 
 DataRouter::DataRouter() : m_channels{}, m_is_initialized{false}
 {
@@ -50,6 +51,33 @@ void DataRouter::init()
     m_channels["CHAN01"] = std::make_shared<Channel>(ifname, macaddr);
 
     m_is_initialized = true;
+  }
+}
+
+void DataRouter::registerDataCallbackHandler(const std::string &channel_name, DataCallbackHandler &&handler)
+{
+  auto it = m_channels.find(channel_name);
+  if(it != m_channels.end()) {
+    auto channel = it->second;
+    channel->registerCallbackHandler(std::move(handler));
+  }
+}
+
+void DataRouter::unRegisterDataCallbackHandler(const std::string &channel_name)
+{
+  auto it = m_channels.find(channel_name);
+  if(it != m_channels.end()) {
+    auto channel = it->second;
+    channel->unRegisterCallbackHandler();
+  }
+}
+
+void DataRouter::publishFrames(const std::string &channel_name, frame_t *frames, uint8_t num_msgs)
+{
+  auto it = m_channels.find(channel_name);
+  if(it != m_channels.end()) {
+    auto channel = it->second;
+    channel->sendFrames(frames, num_msgs);
   }
 }
 
