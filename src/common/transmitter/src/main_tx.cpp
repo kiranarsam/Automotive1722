@@ -77,7 +77,7 @@ int main() {
   uint8_t payload1[8] = {0x0, 0x01, 0x02, 0x03};
   uint8_t payload2[8] = {0x4, 0x05, 0x06, 0x07};
   memcpy(frame1->cc.data, payload1, 8);
-  memcpy(frame1->cc.data, payload2, 8);
+  memcpy(frame2->cc.data, payload2, 8);
 
 
   while(g_running) {
@@ -86,7 +86,7 @@ int main() {
       break;
     }
 
-    transmitter.publish(can_frames, 2U);
+    transmitter.sendPacket(can_frames, 2U);
   }
 
   std::unique_lock<std::mutex> lock(g_mutex);

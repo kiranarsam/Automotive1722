@@ -55,7 +55,7 @@ public:
 
   void stop();
 
-  void publish(frame_t *can_frames, uint8_t num_acf_msgs);
+  void sendPacket(frame_t *can_frames, uint8_t num_acf_msgs);
 
 private:
 

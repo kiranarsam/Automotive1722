@@ -172,7 +172,7 @@ void Transmitter::run()
   }
 }
 
-void Transmitter::publish(frame_t *can_frames, uint8_t num_acf_msgs)
+void Transmitter::sendPacket(frame_t *can_frames, uint8_t num_acf_msgs)
 {
   int res = 0;
   uint8_t cf_seq_num = 0;
