@@ -2,3 +2,7 @@
 	path = src/common/open1722
 	url = https://github.com/kiranarsam/Open1722.git
 	branch = develop
+[submodule "src/common/yaml-cpp"]
+	path = src/common/yaml-cpp
+	url = https://github.com/kiranarsam/yaml-cpp.git
+	branch = develop
