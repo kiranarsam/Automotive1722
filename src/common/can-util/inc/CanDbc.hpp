@@ -31,7 +31,7 @@
 #pragma once
 
 #include <iostream>
-#include <map>
+#include <unordered_map>
 #include <utility>
 #include <fstream>
 
@@ -40,13 +40,13 @@
 class CanDbc
 {
 public:
-  CanDbc(std::string &filename, std::map<uint32_t, can_message> &can_db);
+  CanDbc(std::string &filename, std::unordered_map<uint32_t, can_message> &can_db);
   ~CanDbc();
 
 private:
-  void init(std::string &filename, std::map<uint32_t, can_message> &can_db);
+  void init(std::string &filename, std::unordered_map<uint32_t, can_message> &can_db);
 
-  void parse(std::ifstream &fp, std::map<uint32_t, can_message> &can_db);
+  void parse(std::ifstream &fp, std::unordered_map<uint32_t, can_message> &can_db);
 
   bool m_is_initialized;
 };
