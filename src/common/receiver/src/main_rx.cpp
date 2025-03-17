@@ -59,7 +59,8 @@ int main() {
 
   std::string ifname {"ens160"};
   std::string macaddr {"00:50:56:b0:74:a4"};
-  Receiver receiver{"ens160", "00:50:56:b0:74:a4"};
+  std::string can_ifname {""};
+  Receiver receiver{"ens160", "00:50:56:b0:74:a4", ""};
 
   DataCallbackHandler handler;
   handler.registerCallback(&callbackHandler);

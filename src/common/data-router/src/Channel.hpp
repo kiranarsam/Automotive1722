@@ -39,12 +39,16 @@
 class Channel : public IChannel
 {
 public:
-  Channel(const std::string &ifname, const std::string &macaddr);
+  Channel(const std::string &ifname, const std::string &macaddr, const std::string &can_receiver, const std::string &can_transmitter);
   ~Channel();
 
   void start();
 
   void stop();
+
+  void allowVirtualCanForReceiver(bool enable);
+
+  void allowVirtualCanForTransmitter(bool enable);
 
   void registerCallbackHandler(DataCallbackHandler &&handler);
 
@@ -58,6 +62,8 @@ private:
 
   std::string m_ifname;
   std::string m_macaddr;
+  std::string m_can_ifname_receiver;
+  std::string m_can_ifname_transmitter;
   std::shared_ptr<Receiver> m_receiver;
   std::shared_ptr<Transmitter> m_transmitter;
   bool m_is_initialized;

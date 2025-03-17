@@ -31,7 +31,7 @@
 #include "DataRouter.hpp"
 #include "Channel.hpp"
 
-DataRouter::DataRouter() : m_channels{}, m_is_initialized{false}
+DataRouter::DataRouter() : m_is_initialized{false}, m_channels{}
 {
   init();
 }
@@ -44,11 +44,30 @@ DataRouter::~DataRouter()
 void DataRouter::init()
 {
   if(!m_is_initialized) {
-    // example
+
     std::string ifname = "eth0";
     std::string macaddr = "aa::bb::cc:dd:ee:ff";
-    // create number of channels
-    m_channels["CHAN01"] = std::make_shared<Channel>(ifname, macaddr);
+    std::string can_reciever = "";
+    std::string can_transmitter = "";
+    std::string enable_can_receiver = "";
+    std::string enable_can_transmitter = "";
+    std::string channel_name = "CHANNEL1";
+
+    std::shared_ptr<IChannel> channel = std::make_shared<Channel>(ifname, macaddr, can_reciever, can_transmitter);
+
+    m_channels.insert(std::make_pair(channel_name, channel));
+    //m_settings_map[section_name].insert(std::make_pair(tokens[0], tokens[1]));
+    //m_channels[channel_name] = channel;
+    //m_channels.emplace(channel_name, channel);
+
+    // allow virtual can
+    //
+    if(enable_can_receiver.compare("true") == 0) {
+      channel->allowVirtualCanForReceiver(true);
+    }
+    if(enable_can_transmitter.compare("true") == 0) {
+      channel->allowVirtualCanForTransmitter(true);
+    }
 
     m_is_initialized = true;
   }

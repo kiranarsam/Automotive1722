@@ -55,6 +55,10 @@ void CanReader::init(std::string &ifname, uint8_t can_variant)
   if (!m_is_initialized)
   {
     m_ifname = ifname;
+    if(m_ifname.empty()) {
+      std::cout << "vCAN ifname is empty" << std::endl;
+      return;
+    }
     m_can_variant = can_variant;
 
     m_can_socket = Comm_Can_SetupSocket(m_ifname.c_str(), m_can_variant);

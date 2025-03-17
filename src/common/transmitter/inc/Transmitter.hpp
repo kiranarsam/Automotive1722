@@ -45,11 +45,13 @@ class Transmitter
 {
 public:
 
-  Transmitter(std::string &ifname, std::string &macaddr);
+  Transmitter(const std::string &ifname, const std::string &macaddr, const std::string &can_ifname);
 
   ~Transmitter();
 
   void init();
+
+  void initSocketCan(bool enable);
 
   void start();
 
@@ -84,5 +86,7 @@ private:
   struct sockaddr* m_dest_addr;
 
   CanReader m_can_reader;
+
+  bool m_is_can_initialized;
 
 };

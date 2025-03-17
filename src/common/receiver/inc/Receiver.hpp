@@ -43,11 +43,13 @@ class Receiver
 {
 public:
 
-  Receiver(const std::string &ifname, const std::string &macaddr);
+  Receiver(const std::string &ifname, const std::string &macaddr, const std::string &can_ifname);
 
   ~Receiver();
 
   void init();
+
+  void initSocketCan(bool enable);
 
   void registerCallbackHandler(DataCallbackHandler &&handler);
 
@@ -78,6 +80,8 @@ private:
   bool m_running;
 
   struct pollfd m_poll_fds;
+
+  bool m_is_can_initialized;
 
   CanWriter m_can_writer;
 

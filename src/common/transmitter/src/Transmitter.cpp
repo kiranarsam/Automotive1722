@@ -47,10 +47,11 @@ extern "C" {
 #define CAN_PAYLOAD_MAX_SIZE        16*4
 #define MAX_ETH_PDU_SIZE                1500
 
-Transmitter::Transmitter(std::string &ifname, std::string &macaddr)
-  : m_ifname{ifname}, m_macaddr{macaddr}
+Transmitter::Transmitter(const std::string &ifname, const std::string &macaddr, const std::string &can_ifname)
+  : m_ifname{ifname}, m_macaddr{macaddr}, m_can_ifname{can_ifname}
 {
   m_is_can_enabled = false;
+  m_is_can_initialized = false;
   init();
 }
 
@@ -86,19 +87,24 @@ void Transmitter::init()
       return;
     }
 
-    // Open a CAN socket for reading frames
-    if(m_is_can_enabled) {
-      m_can_reader.init(m_can_ifname, CAN_VARIANT_FD);
-    }
-
     m_is_initialized = true;
     std::cout << "Talker initialized" << std::endl;
   }
 }
 
+void Transmitter::initSocketCan(bool enable)
+{
+  // Open a CAN socket for reading frames
+  if(enable && !m_is_can_initialized) {
+    m_can_reader.init(m_can_ifname, CAN_VARIANT_FD);
+    m_is_can_initialized = true;
+    m_is_can_enabled = true;
+  }
+}
+
 void Transmitter::start()
 {
-  if(m_is_initialized && m_is_can_enabled) {
+  if(m_is_can_enabled && m_is_can_initialized) {
     m_running = true;
     m_transmitter_thread = std::thread{std::bind(&Transmitter::run, this)};
   }
@@ -108,7 +114,7 @@ void Transmitter::stop()
 {
   m_running = false;
 
-  if(m_is_can_enabled) {
+  if(m_is_can_enabled && m_is_can_initialized) {
     if (std::this_thread::get_id() != m_transmitter_thread.get_id()) {
       if (m_transmitter_thread.joinable())
       {

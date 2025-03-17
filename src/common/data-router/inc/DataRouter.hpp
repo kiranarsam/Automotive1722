@@ -30,8 +30,8 @@
 
 #pragma once
 
-#include <map>
 #include <memory>
+#include <map>
 #include "IChannel.hpp"
 
 class DataRouter
@@ -53,8 +53,6 @@ public:
 private:
 
   void init();
-
-  std::map<std::string, std::shared_ptr<IChannel>> m_channels;
   bool m_is_initialized;
-
+  std::map<std::string, std::shared_ptr<IChannel> > m_channels;
 };

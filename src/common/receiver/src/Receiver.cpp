@@ -48,10 +48,11 @@ extern "C" {
 #define MAX_ETH_PDU_SIZE                1500
 #define MAX_CAN_FRAMES_IN_ACF           15
 
-Receiver::Receiver(const std::string &ifname, const std::string &macaddr)
-  : m_ifname{ifname}, m_macaddr{macaddr}
+Receiver::Receiver(const std::string &ifname, const std::string &macaddr, const std::string &can_ifname)
+  : m_ifname{ifname}, m_macaddr{macaddr}, m_can_ifname{can_ifname}
 {
   m_is_can_enabled = false;
+  m_is_can_initialized = false;
   init();
 }
 
@@ -78,13 +79,18 @@ void Receiver::init()
       return;
     }
 
-    // Open a CAN socket for reading frames
-    if(m_is_can_enabled) {
-      m_can_writer.init(m_can_ifname, CAN_VARIANT_FD);
-    }
-
     m_is_initialized = true;
     std::cout << "init initialized " << std::endl;
+  }
+}
+
+void Receiver::initSocketCan(bool enable)
+{
+  // Open a CAN socket for reading frames
+  if(enable && !m_is_can_initialized) {
+    m_can_writer.init(m_can_ifname, CAN_VARIANT_FD);
+    m_is_can_initialized = true;
+    m_is_can_enabled = true;
   }
 }
 
