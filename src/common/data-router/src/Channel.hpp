@@ -39,7 +39,7 @@
 class Channel : public IChannel
 {
 public:
-  Channel(const std::string &ifname, const std::string &macaddr, const std::string &can_receiver, const std::string &can_transmitter);
+  Channel(const std::string &ifname, const std::string &macaddr, const std::string &can_receiver, const std::string &can_transmitter, const std::string &channel_name);
   ~Channel();
 
   void start();
@@ -67,4 +67,5 @@ private:
   std::shared_ptr<Receiver> m_receiver;
   std::shared_ptr<Transmitter> m_transmitter;
   bool m_is_initialized;
+  std::string m_channel_name;
 };

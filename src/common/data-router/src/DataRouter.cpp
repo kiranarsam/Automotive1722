@@ -30,6 +30,10 @@
 
 #include "DataRouter.hpp"
 #include "Channel.hpp"
+#include "SettingsFactory.hpp"
+
+#include <iostream>
+#include <sstream>
 
 DataRouter::DataRouter() : m_is_initialized{false}, m_channels{}
 {
@@ -44,23 +48,35 @@ DataRouter::~DataRouter()
 void DataRouter::init()
 {
   if(!m_is_initialized) {
-    std::string ifname = "eth0";
-    std::string macaddr = "aa::bb::cc:dd:ee:ff";
-    std::string can_reciever = "";
-    std::string can_transmitter = "";
-    std::string enable_can_receiver = "";
-    std::string enable_can_transmitter = "";
-    std::string channel_name = "CHANNEL1";
+    auto settings = SettingsFactory::GetInstance();
+    std::stringstream ss; // convert for specific data types
+    uint8_t num_channels;
+    auto num_channels_str = settings->getData(SettingsKey::SECTION_DEFAULT, SettingsKey::NUM_CHANNEL);
+    ss << num_channels_str;
+    ss >> num_channels;
+    for (uint8_t section = 1; section <= num_channels; section++)
+    {
+      std::stringstream index_ss;
+      index_ss << section;
+      // consider channel name is same as section name
+      auto channel_name = SettingsKey::SECTION_CHANNEL + index_ss.str();
+      auto ifname = settings->getData(channel_name, SettingsKey::ETH_IF_NAME);
+      auto macaddr = settings->getData(channel_name, SettingsKey::DEST_MAC_ADDR);
+      auto can_reciever = settings->getData(channel_name, SettingsKey::CAN_IF_NAME_RECEIVER);
+      auto can_transmitter = settings->getData(channel_name, SettingsKey::CAN_IF_NAME_TRANSMITTER);
+      auto enable_can_receiver = settings->getData(channel_name, SettingsKey::CAN_RECEIVER_ENABLED);
+      auto enable_can_transmitter = settings->getData(channel_name, SettingsKey::CAN_TRANSMITTER_ENABLED);
 
-    std::shared_ptr<IChannel> channel = std::make_shared<Channel>(ifname, macaddr, can_reciever, can_transmitter);
+      std::shared_ptr<IChannel> channel = std::make_shared<Channel>(ifname, macaddr, can_reciever, can_transmitter, channel_name);
 
-    m_channels[channel_name] = channel;
+      m_channels[channel_name] = channel;
 
-    if(enable_can_receiver.compare("true") == 0) {
-      channel->allowVirtualCanForReceiver(true);
-    }
-    if(enable_can_transmitter.compare("true") == 0) {
-      channel->allowVirtualCanForTransmitter(true);
+      if(enable_can_receiver.compare("true") == 0) {
+        channel->allowVirtualCanForReceiver(true);
+      }
+      if(enable_can_transmitter.compare("true") == 0) {
+        channel->allowVirtualCanForTransmitter(true);
+      }
     }
 
     m_is_initialized = true;
@@ -69,28 +85,34 @@ void DataRouter::init()
 
 void DataRouter::registerDataCallbackHandler(const std::string &channel_name, DataCallbackHandler &&handler)
 {
-  auto it = m_channels.find(channel_name);
-  if(it != m_channels.end()) {
-    auto channel = it->second;
+  try {
+    auto channel = m_channels.at(channel_name);
     channel->registerCallbackHandler(std::move(handler));
+  }
+  catch(...) {
+    std::cout << "Unable to register with channel: " << channel_name << std::endl;
   }
 }
 
 void DataRouter::unRegisterDataCallbackHandler(const std::string &channel_name)
 {
-  auto it = m_channels.find(channel_name);
-  if(it != m_channels.end()) {
-    auto channel = it->second;
+  try {
+    auto channel = m_channels.at(channel_name);
     channel->unRegisterCallbackHandler();
+  }
+  catch(...) {
+    std::cout << "Unable to unregister with channel: " << channel_name << std::endl;
   }
 }
 
 void DataRouter::publishFrames(const std::string &channel_name, frame_t *frames, uint8_t num_msgs)
 {
-  auto it = m_channels.find(channel_name);
-  if(it != m_channels.end()) {
-    auto channel = it->second;
+  try {
+    auto channel = m_channels.at(channel_name);
     channel->sendFrames(frames, num_msgs);
+  }
+  catch(...) {
+    std::cout << "Unable to send frames on channel: " << channel_name << std::endl;
   }
 }
 

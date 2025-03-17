@@ -4,14 +4,16 @@
 #include <vector>
 #include <iostream>
 
-const std::string SettingsKey::DEFAULT = "DEFAULT";
+const std::string SettingsKey::SECTION_DEFAULT = "DEFAULT";
 const std::string SettingsKey::NUM_CHANNEL = "NUM_CHANNEL";
 
-const std::string SettingsKey::CHANNEL = "CHANNEL";
+const std::string SettingsKey::SECTION_CHANNEL = "CHANNEL";
 const std::string SettingsKey::ETH_IF_NAME = "ETH_IF_NAME";
 const std::string SettingsKey::DEST_MAC_ADDR = "DEST_MAC_ADDR";
-const std::string SettingsKey::CAN_IF_NAME = "CAN_IF_NAME";
-const std::string SettingsKey::CAN_ENABLED = "CAN_ENABLED";
+const std::string SettingsKey::CAN_IF_NAME_RECEIVER = "CAN_IF_NAME_RECEIVER";
+const std::string SettingsKey::CAN_IF_NAME_TRANSMITTER = "CAN_IF_NAME_TRANSMITTER";
+const std::string SettingsKey::CAN_RECEIVER_ENABLED = "CAN_RECEIVER_ENABLED";
+const std::string SettingsKey::CAN_TRANSMITTER_ENABLED = "CAN_TRANSMITTER_ENABLED";
 
 const std::string Settings::WHITESPACE = " \n\r\t\f\v";
 const std::string Settings::SETTINGS_FILE_NAME = "settings.dat";
@@ -25,13 +27,14 @@ Settings::~Settings()
 {
 }
 
-void Settings::getData(const std::string &section, const std::string &key, std::string &value)
+const std::string Settings::getData(const std::string &section, const std::string &key)
 {
   try {
-    value = m_settings_map.at(section).at(key);
+    return m_settings_map.at(section).at(key);
   }
   catch(...) {
-    value = "";
+    // return default value in case of exception
+    return "";
   }
 }
 
@@ -94,15 +97,6 @@ void Settings::parse(std::ifstream &ins)
       }
 
       m_settings_map[section_name].insert(std::make_pair(tokens[0], tokens[1]));
-
-      // auto it1 = m_channel_map.find(section_name);
-      // if(it1 != m_channel_map.end()) {
-      //   auto &inner_map = it1->second;
-      //   inner_map.insert(std::make_pair(tokens[0], tokens[1]));
-      // }
-      // else {
-      //   m_channel_map[section_name].insert(std::make_pair(tokens[0], tokens[1]));
-      // }
     }
   }
 }

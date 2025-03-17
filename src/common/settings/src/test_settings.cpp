@@ -6,15 +6,13 @@ int main() {
 
   auto settings = SettingsFactory::GetInstance();
 
-  std::string macaddr;
-  std::string channel_name = SettingsKey::CHANNEL + "2";
+  // std::string channel_name = SettingsKey::SECTION_CHANNEL + "2";
 
-  settings->getData(channel_name, SettingsKey::DEST_MAC_ADDR, macaddr);
+  auto macaddr = settings->getData(SettingsKey::SECTION_CHANNEL + "2", SettingsKey::DEST_MAC_ADDR);
 
   std::cout << "Mac address = " << macaddr << std::endl;
 
-  std::string num_channel;
-  settings->getData(SettingsKey::DEFAULT, SettingsKey::NUM_CHANNEL, num_channel);
+  auto num_channel = settings->getData(SettingsKey::SECTION_DEFAULT, SettingsKey::NUM_CHANNEL);
 
   std::cout << "NUM_CHANNEL = " << num_channel << std::endl;
 

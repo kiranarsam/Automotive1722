@@ -12,7 +12,7 @@ public:
 
   ~Settings();
 
-  void getData(const std::string &section, const std::string &key, std::string &value);
+  const std::string getData(const std::string &section, const std::string &key);
 
 private:
   void load();

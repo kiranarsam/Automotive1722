@@ -13,4 +13,5 @@ target_include_directories(datarouter
 target_link_libraries(datarouter
   receiver
   transmitter
+  settings
 )
