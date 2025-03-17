@@ -31,7 +31,8 @@
 #pragma once
 
 #include <memory>
-#include <map>
+#include <string>
+#include <unordered_map>
 #include "IChannel.hpp"
 
 class DataRouter
@@ -54,5 +55,5 @@ private:
 
   void init();
   bool m_is_initialized;
-  std::map<std::string, std::shared_ptr<IChannel> > m_channels;
+  std::unordered_map<std::string, std::shared_ptr<IChannel>> m_channels;
 };

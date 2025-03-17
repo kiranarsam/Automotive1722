@@ -44,7 +44,6 @@ DataRouter::~DataRouter()
 void DataRouter::init()
 {
   if(!m_is_initialized) {
-
     std::string ifname = "eth0";
     std::string macaddr = "aa::bb::cc:dd:ee:ff";
     std::string can_reciever = "";
@@ -55,13 +54,8 @@ void DataRouter::init()
 
     std::shared_ptr<IChannel> channel = std::make_shared<Channel>(ifname, macaddr, can_reciever, can_transmitter);
 
-    m_channels.insert(std::make_pair(channel_name, channel));
-    //m_settings_map[section_name].insert(std::make_pair(tokens[0], tokens[1]));
-    //m_channels[channel_name] = channel;
-    //m_channels.emplace(channel_name, channel);
+    m_channels[channel_name] = channel;
 
-    // allow virtual can
-    //
     if(enable_can_receiver.compare("true") == 0) {
       channel->allowVirtualCanForReceiver(true);
     }
