@@ -13,4 +13,5 @@ public:
   virtual void registerCallbackHandler(DataCallbackHandler &&handler) = 0;
   virtual void unRegisterCallbackHandler() = 0;
   virtual void sendFrames(frame_t *frames, uint8_t num_msgs) = 0;
+  virtual ~IChannel() {}
 };

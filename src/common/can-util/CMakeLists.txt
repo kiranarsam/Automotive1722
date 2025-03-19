@@ -29,3 +29,13 @@ target_include_directories(test_dbc
 target_link_libraries(test_dbc
   canutil
 )
+
+install(TARGETS
+    test_dbc
+    DESTINATION "${CMAKE_INSTALL_PREFIX}"
+)
+
+install(FILES
+    ./test.dbc
+    DESTINATION "${CMAKE_INSTALL_PREFIX}"
+)

@@ -24,3 +24,13 @@ target_include_directories(test_settings
 target_link_libraries(test_settings
   settings
 )
+
+install(FILES
+    ./config/settings.dat
+    DESTINATION "${CMAKE_INSTALL_PREFIX}"
+)
+
+install(TARGETS
+    test_settings
+    DESTINATION "${CMAKE_INSTALL_PREFIX}"
+)

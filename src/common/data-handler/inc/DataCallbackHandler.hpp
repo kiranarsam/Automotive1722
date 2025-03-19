@@ -6,6 +6,8 @@
 class DataCallbackHandler
 {
 public:
+  DataCallbackHandler();
+  ~DataCallbackHandler();
   void registerCallback(std::function<void(int)> callback);
 
   void handleCallback(int);

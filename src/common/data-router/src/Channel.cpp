@@ -29,6 +29,7 @@
  */
 
 #include "Channel.hpp"
+#include <iostream>
 
 Channel::Channel(const std::string &ifname, const std::string &macaddr, const std::string &can_receiver, const std::string &can_transmitter, const std::string &channel_name)
   : m_ifname{ifname}, m_macaddr{macaddr}, m_can_ifname_receiver{can_receiver}, m_can_ifname_transmitter{can_transmitter}, m_receiver{nullptr}, m_transmitter{nullptr}, m_is_initialized{false}, m_channel_name{channel_name}
@@ -38,7 +39,7 @@ Channel::Channel(const std::string &ifname, const std::string &macaddr, const st
 
 Channel::~Channel()
 {
-
+  std::cout << "~Channel" << std::endl;
 }
 
 void Channel::init()
@@ -48,6 +49,7 @@ void Channel::init()
     m_transmitter = std::make_shared<Transmitter>(m_ifname, m_macaddr, m_can_ifname_transmitter);
 
     m_is_initialized = true;
+    std::cout << "Channel initialized " << std::endl;
   }
 }
 
@@ -78,8 +80,10 @@ void Channel::sendFrames(frame_t *frames, uint8_t num_msgs)
 
 void Channel::start()
 {
+  std::cout << "Channel start() IN " << std::endl;
   m_receiver->start();
   m_transmitter->start();
+  std::cout << "Channel start() OUT " << std::endl;
 }
 
 void Channel::stop()

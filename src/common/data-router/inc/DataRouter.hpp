@@ -33,6 +33,7 @@
 #include <memory>
 #include <string>
 #include <unordered_map>
+#include <vector>
 #include "IChannel.hpp"
 
 class DataRouter
@@ -45,6 +46,8 @@ public:
 
   void stop();
 
+  void getListOfChannelNames(std::vector<std::string> &channel_list);
+
   void registerDataCallbackHandler(const std::string &channel_name, DataCallbackHandler &&handler);
 
   void unRegisterDataCallbackHandler(const std::string &channel_name);
@@ -56,4 +59,5 @@ private:
   void init();
   bool m_is_initialized;
   std::unordered_map<std::string, std::shared_ptr<IChannel>> m_channels;
+  std::vector<std::string> m_channel_list;
 };

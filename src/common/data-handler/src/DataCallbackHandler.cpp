@@ -1,5 +1,16 @@
 
 #include "DataCallbackHandler.hpp"
+#include <iostream>
+
+DataCallbackHandler::DataCallbackHandler()
+{
+
+}
+
+DataCallbackHandler::~DataCallbackHandler()
+{
+  std::cout << "~DataCallbackHandler" << std::endl;
+}
 
 void DataCallbackHandler::registerCallback(std::function<void(int)> callback)
 {
