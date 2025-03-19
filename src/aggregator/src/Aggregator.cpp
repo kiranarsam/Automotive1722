@@ -82,6 +82,8 @@ void Aggregator::stop()
   while (!m_queue.empty()) {
     m_queue.pop();
   }
+
+  m_data_router.stop();
 }
 
 void Aggregator::run()
