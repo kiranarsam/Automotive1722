@@ -57,7 +57,7 @@ public:
 
   void stop();
 
-  void sendPacket(frame_t *can_frames, uint8_t num_acf_msgs);
+  void sendPacket(CanFrame *can_frames, uint8_t num_acf_msgs);
 
 private:
 

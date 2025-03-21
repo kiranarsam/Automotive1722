@@ -43,7 +43,7 @@ extern "C"
 
 #include <iostream>
 
-int AvtpUtil::extractCanFramesFromAvtp(uint8_t* pdu, frame_t* can_frames, uint8_t* exp_cf_seqnum)
+int AvtpUtil::extractCanFramesFromAvtp(uint8_t* pdu, CanFrame* can_frames, uint8_t* exp_cf_seqnum)
 {
   uint8_t *cf_pdu = nullptr;
   uint8_t *acf_pdu = nullptr;
@@ -100,7 +100,14 @@ int AvtpUtil::extractCanFramesFromAvtp(uint8_t* pdu, frame_t* can_frames, uint8_
       proc_bytes += acf_msg_length;
 
       // Need to work on multiple can frames
-      frame_t* frame = &(can_frames[i++]);
+      CanFrame *frame = &(can_frames[i++]);
+
+      if (Avtp_Can_GetFdf((Avtp_Can_t *)acf_pdu)) {
+        frame->type = CanVariant::CAN_VARIANT_FD;
+      }
+      else {
+        frame->type = CanVariant::CAN_VARIANT_CC;
+      }
 
       // Handle EFF Flag
       if (Avtp_Can_GetEff((Avtp_Can_t*)acf_pdu)) {
@@ -115,24 +122,24 @@ int AvtpUtil::extractCanFramesFromAvtp(uint8_t* pdu, frame_t* can_frames, uint8_
           can_id |= CAN_RTR_FLAG;
       }
 
-      if (USER_CAN_VARIANT == AVTP_CAN_FD) {
+      if (frame->type == CanVariant::CAN_VARIANT_FD) {
           if (Avtp_Can_GetBrs((Avtp_Can_t*)acf_pdu)) {
-              frame->fd.flags |= CANFD_BRS;
+              frame->data.fd.flags |= CANFD_BRS;
           }
           if (Avtp_Can_GetFdf((Avtp_Can_t*)acf_pdu)) {
-              frame->fd.flags |= CANFD_FDF;
+              frame->data.fd.flags |= CANFD_FDF;
           }
           if (Avtp_Can_GetEsi((Avtp_Can_t*)acf_pdu)) {
-              frame->fd.flags |= CANFD_ESI;
+              frame->data.fd.flags |= CANFD_ESI;
           }
 
-          frame->fd.can_id = can_id;
-          frame->fd.len = can_payload_length;
-          memcpy(frame->fd.data, can_payload, can_payload_length);
+          frame->data.fd.can_id = can_id;
+          frame->data.fd.len = can_payload_length;
+          memcpy(frame->data.fd.data, can_payload, can_payload_length);
       } else {
-          frame->cc.can_id = can_id;
-          frame->cc.len = can_payload_length;
-          memcpy(frame->cc.data, can_payload, can_payload_length);
+          frame->data.cc.can_id = can_id;
+          frame->data.cc.len = can_payload_length;
+          memcpy(frame->data.cc.data, can_payload, can_payload_length);
       }
 
       std::cout << "canid = " << can_id << ", length = " << can_payload_length << std::endl;
@@ -141,7 +148,7 @@ int AvtpUtil::extractCanFramesFromAvtp(uint8_t* pdu, frame_t* can_frames, uint8_
   return i;
 }
 
-int AvtpUtil::insertCanFramesToAvtp(uint8_t* pdu, frame_t *can_frames,
+int AvtpUtil::insertCanFramesToAvtp(uint8_t* pdu, CanFrame *can_frames,
     uint8_t num_acf_msgs, uint8_t cf_seq_num)
 {
   // Pack into control formats
@@ -162,7 +169,7 @@ int AvtpUtil::insertCanFramesToAvtp(uint8_t* pdu, frame_t *can_frames,
   int i = 0;
   while (i < num_acf_msgs) {
       uint8_t* acf_pdu = pdu + pdu_length;
-      res = AvtpUtil::prepareAcfPacket(acf_pdu, &(can_frames[i]), USER_CAN_VARIANT);
+      res = AvtpUtil::prepareAcfPacket(acf_pdu, &(can_frames[i]));
       pdu_length += res;
       cf_length += res;
       i++;
@@ -219,7 +226,7 @@ int AvtpUtil::updateCfLength(uint8_t* cf_pdu, uint64_t length, int use_tscf)
     return 0;
 }
 
-int AvtpUtil::prepareAcfPacket(uint8_t* acf_pdu, frame_t* frame, Avtp_CanVariant_t can_variant)
+int AvtpUtil::prepareAcfPacket(uint8_t* acf_pdu, CanFrame* frame)
 {
   struct timespec now;
   canid_t can_id = 0U;
@@ -236,12 +243,12 @@ int AvtpUtil::prepareAcfPacket(uint8_t* acf_pdu, frame_t* frame, Avtp_CanVariant
   Avtp_Can_EnableMtv(pdu);
 
   // Set required CAN Flags
-  if (can_variant == AVTP_CAN_FD) {
-    can_id = frame->fd.can_id;
-    can_payload_length = frame->fd.len;
+  if (frame->type == CanVariant::CAN_VARIANT_FD) {
+    can_id = frame->data.fd.can_id;
+    can_payload_length = frame->data.fd.len;
   } else {
-    can_id = frame->cc.can_id;
-    can_payload_length = frame->cc.len;
+    can_id = frame->data.cc.can_id;
+    can_payload_length = frame->data.cc.len;
   }
 
   if (can_id & CAN_EFF_FLAG) {
@@ -252,35 +259,26 @@ int AvtpUtil::prepareAcfPacket(uint8_t* acf_pdu, frame_t* frame, Avtp_CanVariant
       Avtp_Can_EnableRtr(pdu);
   }
 
-  if (can_variant == AVTP_CAN_FD) {
-      if (frame->fd.flags & CANFD_BRS) {
+  if (frame->type == CanVariant::CAN_VARIANT_FD) {
+      if (frame->data.fd.flags & CANFD_BRS) {
           Avtp_Can_EnableBrs(pdu);
       }
-      if (frame->fd.flags & CANFD_FDF) {
+      if (frame->data.fd.flags & CANFD_FDF) {
           Avtp_Can_EnableFdf(pdu);
       }
-      if (frame->fd.flags & CANFD_ESI) {
+      if (frame->data.fd.flags & CANFD_ESI) {
           Avtp_Can_EnableEsi(pdu);
       }
   }
 
   // Copy payload to ACF CAN PDU
-  if(can_variant == AVTP_CAN_FD) {
-      Avtp_Can_CreateAcfMessage(pdu, can_id & CAN_EFF_MASK, frame->fd.data,
-                                        can_payload_length, can_variant);
+  if(frame->type == CanVariant::CAN_VARIANT_FD) {
+      Avtp_Can_CreateAcfMessage(pdu, can_id & CAN_EFF_MASK, frame->data.fd.data,
+                                        can_payload_length, (Avtp_CanVariant_t)frame->type);
   } else {
-      Avtp_Can_CreateAcfMessage(pdu, can_id & CAN_EFF_MASK, frame->cc.data,
-                                        can_payload_length, can_variant);
+      Avtp_Can_CreateAcfMessage(pdu, can_id & CAN_EFF_MASK, frame->data.cc.data,
+                                        can_payload_length, (Avtp_CanVariant_t)frame->type);
   }
 
   return Avtp_Can_GetAcfMsgLength(pdu)*4;
-}
-
-Avtp_CanVariant_t AvtpUtil::getCanVariant(int can_variant)
-{
-  if (can_variant == 0) {
-    return AVTP_CAN_CLASSIC;
-  }
-
-  return AVTP_CAN_FD;
 }

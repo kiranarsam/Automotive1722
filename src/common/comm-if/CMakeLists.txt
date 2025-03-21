@@ -5,6 +5,7 @@ project(CommIf_Project)
 add_library(comm_if STATIC
     "src/ether_comm_if.c"
     "src/can_comm_if.c"
+    "src/lo_comm_if.c"
 )
 
 target_include_directories(comm_if

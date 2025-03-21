@@ -54,7 +54,7 @@ public:
 
   void unRegisterCallbackHandler();
 
-  void sendFrames(frame_t *frames, uint8_t num_msgs);
+  void sendFrames(CanFrame *frames, uint8_t num_msgs);
 
 private:
 

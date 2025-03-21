@@ -32,6 +32,8 @@
 
 /* System files */
 #include <poll.h>
+#include <sys/socket.h>
+#include <linux/if_packet.h>
 
 #include <string>
 #include <thread>
@@ -82,6 +84,10 @@ private:
   bool m_running;
 
   struct pollfd m_poll_fds;
+
+  struct sockaddr_ll sk_ll_addr;
+
+  struct sockaddr* m_dest_addr;
 
   bool m_is_can_initialized;
 

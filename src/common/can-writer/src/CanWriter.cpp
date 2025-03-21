@@ -50,7 +50,7 @@ CanWriter::~CanWriter()
 
 }
 
-void CanWriter::init(std::string &ifname, uint8_t can_variant)
+void CanWriter::init(std::string &ifname, CanVariant can_variant)
 {
   if (!m_is_initialized)
   {
@@ -59,7 +59,10 @@ void CanWriter::init(std::string &ifname, uint8_t can_variant)
       std::cout << "vCAN ifname is empty" << std::endl;
       return;
     }
-    m_can_variant = can_variant;
+
+    //m_can_variant = (can_variant == CanVariant::CAN_VARIANT_FD) ? 1U : 0U;
+    m_can_variant = static_cast<uint8_t>(can_variant);
+    std::cout << "Writer vCAN m_can_variant " <<  m_can_variant << std::endl;
 
     m_can_socket = Comm_Can_SetupSocket(m_ifname.c_str(), m_can_variant);
     if (m_can_socket < 0) {
@@ -71,14 +74,15 @@ void CanWriter::init(std::string &ifname, uint8_t can_variant)
   }
 }
 
-void CanWriter::sendData(frame_t *can_frames, uint8_t num_can_msgs)
+void CanWriter::sendData(CanFrame *can_frames, uint8_t num_can_msgs)
 {
   int res = -1;
   for (int i = 0; i < num_can_msgs; i++) {
-    if (m_can_variant == CAN_VARIANT_FD) {
-        res = write(m_can_socket, &can_frames[i].fd, sizeof(struct canfd_frame));
-    } else if (m_can_variant == CAN_VARIANT_CC) {
-        res = write(m_can_socket, &can_frames[i].cc, sizeof(struct can_frame));
+    CanFrame* frame = &can_frames[i];
+    if (frame->type == CanVariant::CAN_VARIANT_FD) {
+        res = write(m_can_socket, &frame->data.fd, CANFD_MTU);
+    } else if (frame->type == CanVariant::CAN_VARIANT_CC) {
+        res = write(m_can_socket, &frame->data.cc, CAN_MTU);
     }
 
     if(res < 0) {

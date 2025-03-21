@@ -35,6 +35,7 @@
 extern "C" {
 #include "ether_comm_if.h"
 #include "can_comm_if.h"
+#include "lo_comm_if.h"
 }
 
 #include <iostream>
@@ -66,18 +67,30 @@ void Receiver::init()
 {
   if (!m_is_initialized) {
     int res = -1;
-    uint8_t addr[ETH_ALEN];
 
-    res = CommonUtils::getMacAddress(m_macaddr, addr);
-    if(res < 0) {
-      std::cout << "Invalid mac address" << std::endl;
-      return;
-    }
+    if(m_ifname == "lo") {
+      // Loopback address
+      m_eth_fd = Comm_Lo_CreateSocket(m_ifname.c_str(), ETH_P_TSN, &sk_ll_addr);
+      m_dest_addr = (struct sockaddr*) &sk_ll_addr;
+      if (m_eth_fd < 0) {
+        std::cout << "Failue to create listener ethernet socket" << std::endl;
+        return;
+      }
+    } else {
+      // ethernet mac address
+      uint8_t addr[ETH_ALEN];
 
-    m_eth_fd = Comm_Ether_CreateListenerSocket(m_ifname.c_str(), addr, ETH_P_TSN);
-    if (m_eth_fd < 0) {
-      std::cout << "Failue to create listener ethernet socket" << std::endl;
-      return;
+      res = CommonUtils::getMacAddress(m_macaddr, addr);
+      if(res < 0) {
+        std::cout << "Invalid mac address" << std::endl;
+        return;
+      }
+
+      m_eth_fd = Comm_Ether_CreateListenerSocket(m_ifname.c_str(), addr, ETH_P_TSN);
+      if (m_eth_fd < 0) {
+        std::cout << "Failue to create listener ethernet socket" << std::endl;
+        return;
+      }
     }
 
     m_is_initialized = true;
@@ -89,7 +102,7 @@ void Receiver::initSocketCan(bool enable)
 {
   // Open a CAN socket for reading frames
   if(enable && !m_is_can_initialized) {
-    m_can_writer.init(m_can_ifname, CAN_VARIANT_FD);
+    m_can_writer.init(m_can_ifname, CanVariant::CAN_VARIANT_FD);
     m_is_can_initialized = true;
     m_is_can_enabled = true;
   }
@@ -137,7 +150,7 @@ void Receiver::run()
   uint8_t num_can_msgs = 0;
   uint8_t exp_cf_seqnum = 0;
   uint8_t pdu[MAX_ETH_PDU_SIZE];
-  frame_t can_frames[MAX_CAN_FRAMES_IN_ACF];
+  CanFrame can_frames[MAX_CAN_FRAMES_IN_ACF];
 
   m_poll_fds.fd = m_eth_fd;
   m_poll_fds.events = POLLIN;
@@ -177,8 +190,11 @@ void Receiver::run()
       exp_cf_seqnum++;
       for(auto num = 0; num < num_can_msgs; num++) {
         callback_data msg;
+        CanFrame *frame = &can_frames[num];
         msg.name = m_channel_name;
-        std::memcpy(&(msg.can_data), &can_frames[num], sizeof(frame_t));
+        std::cout << "Receiver: frame_type = " << (uint8_t)frame->type << std::endl;
+        msg.cf.type = frame->type;
+        std::memcpy(&(msg.cf.data), &frame->data, sizeof(CanCcFd));
         m_callback_handler.handleCallback(msg);
       }
 

@@ -35,6 +35,7 @@
 extern "C" {
   #include "ether_comm_if.h"
   #include "can_comm_if.h"
+  #include "lo_comm_if.h"
 }
 
 #include <iostream>
@@ -65,26 +66,37 @@ void Transmitter::init()
   if(!m_is_initialized) {
 
     int res = -1;
-    uint8_t addr[ETH_ALEN];
-
-    res = CommonUtils::getMacAddress(m_macaddr, addr);
-    if(res < 0) {
-      std::cout << "Invalid mac address" << std::endl;
-      return;
+    if(m_ifname == "lo") {
+      // Loopback address
+      m_eth_fd = Comm_Lo_CreateSocket(m_ifname.c_str(), ETH_P_TSN, &sk_ll_addr);
+      m_dest_addr = (struct sockaddr*) &sk_ll_addr;
+      if (m_eth_fd < 0) {
+        std::cout << "Failue to create listener ethernet socket" << std::endl;
+        return;
+      }
     }
+    else {
+      uint8_t addr[ETH_ALEN];
 
-    m_eth_fd = Comm_Ether_CreateTalkerSocket(-1);
-    if (m_eth_fd < 0) {
-      std::cout << "Failure to create talker socket" << std::endl;
-      return;
-    }
+      res = CommonUtils::getMacAddress(m_macaddr, addr);
+      if(res < 0) {
+        std::cout << "Invalid mac address" << std::endl;
+        return;
+      }
 
-    res = Comm_Ether_SetupSocketAddress(m_eth_fd, m_ifname.c_str(), addr,
-                                ETH_P_TSN, &sk_ll_addr);
-    m_dest_addr = (struct sockaddr*) &sk_ll_addr;
-    if (res < 0) {
-      std::cout << "Failure to create destination socket address" << std::endl;
-      return;
+      m_eth_fd = Comm_Ether_CreateTalkerSocket(-1);
+      if (m_eth_fd < 0) {
+        std::cout << "Failure to create talker socket" << std::endl;
+        return;
+      }
+
+      res = Comm_Ether_SetupSocketAddress(m_eth_fd, m_ifname.c_str(), addr,
+                                  ETH_P_TSN, &sk_ll_addr);
+      m_dest_addr = (struct sockaddr*) &sk_ll_addr;
+      if (res < 0) {
+        std::cout << "Failure to create destination socket address" << std::endl;
+        return;
+      }
     }
 
     m_is_initialized = true;
@@ -96,7 +108,7 @@ void Transmitter::initSocketCan(bool enable)
 {
   // Open a CAN socket for reading frames
   if(enable && !m_is_can_initialized) {
-    m_can_reader.init(m_can_ifname, CAN_VARIANT_FD);
+    m_can_reader.init(m_can_ifname, CanVariant::CAN_VARIANT_FD);
     m_is_can_initialized = true;
     m_is_can_enabled = true;
   }
@@ -136,7 +148,7 @@ void Transmitter::run()
   uint8_t pdu[MAX_ETH_PDU_SIZE];
   uint16_t pdu_length = 0;
   uint8_t num_acf_msgs = 1U;
-  frame_t can_frames[num_acf_msgs];
+  CanFrame can_frames[num_acf_msgs];
 
   m_poll_fds.fd = m_can_reader.getCanSocket();
   m_poll_fds.events = POLLIN;
@@ -178,7 +190,7 @@ void Transmitter::run()
   }
 }
 
-void Transmitter::sendPacket(frame_t *can_frames, uint8_t num_acf_msgs)
+void Transmitter::sendPacket(CanFrame *can_frames, uint8_t num_acf_msgs)
 {
   int res = 0;
   uint8_t cf_seq_num = 0;

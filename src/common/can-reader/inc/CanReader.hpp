@@ -40,9 +40,9 @@ public:
   CanReader();
   ~CanReader();
 
-  void init(std::string &ifname, uint8_t can_variant);
+  void init(std::string &ifname, CanVariant can_variant);
 
-  void receiveData(frame_t *can_frames, uint8_t num_acf_msgs);
+  void receiveData(CanFrame *can_frames, uint8_t num_acf_msgs);
 
   int getCanSocket();
 

@@ -127,7 +127,7 @@ void DataRouter::unRegisterDataCallbackHandler(const std::string &channel_name)
   }
 }
 
-void DataRouter::publishFrames(const std::string &channel_name, frame_t *frames, uint8_t num_msgs)
+void DataRouter::publishFrames(const std::string &channel_name, CanFrame *frames, uint8_t num_msgs)
 {
   try {
     auto channel = m_channels.at(channel_name);

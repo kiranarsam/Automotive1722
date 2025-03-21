@@ -26,6 +26,14 @@ int main() {
 
   auto callback = [](callback_data &msg) {
     std::cout << "Main data = " << msg.name << std::endl;
+    if(msg.cf.type == CanVariant::CAN_VARIANT_FD) {
+      std::cout << "Main data type = " << (uint8_t)CanVariant::CAN_VARIANT_FD << std::endl;
+    }
+    else
+    {
+      std::cout << "Main data type = " << (uint8_t)CanVariant::CAN_VARIANT_CC << std::endl;
+    }
+
   };
 
   DataCallbackHandler handler;

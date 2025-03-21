@@ -73,7 +73,7 @@ void Channel::unRegisterCallbackHandler()
   m_receiver->unRegisterCallbackHandler();
 }
 
-void Channel::sendFrames(frame_t *frames, uint8_t num_msgs)
+void Channel::sendFrames(CanFrame *frames, uint8_t num_msgs)
 {
   m_transmitter->sendPacket(frames, num_msgs);
 }

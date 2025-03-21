@@ -28,3 +28,8 @@ target_include_directories(test_transmitter
 target_link_libraries(test_transmitter
   transmitter
 )
+
+install(TARGETS
+  test_transmitter
+  DESTINATION "${CMAKE_INSTALL_PREFIX}"
+)

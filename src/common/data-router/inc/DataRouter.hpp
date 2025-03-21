@@ -52,7 +52,7 @@ public:
 
   void unRegisterDataCallbackHandler(const std::string &channel_name);
 
-  void publishFrames(const std::string &channel_name, frame_t *frames, uint8_t num_msgs);
+  void publishFrames(const std::string &channel_name, CanFrame *frames, uint8_t num_msgs);
 
 private:
 

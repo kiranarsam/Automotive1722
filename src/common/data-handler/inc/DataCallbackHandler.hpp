@@ -7,7 +7,7 @@
 
 typedef struct {
   std::string name;
-  frame_t can_data;
+  CanFrame cf;
 } callback_data;
 
 typedef std::function<void (callback_data &)> canCallbackHandler;

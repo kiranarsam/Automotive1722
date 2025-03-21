@@ -55,34 +55,35 @@ void handleSignal(int sig)
   }
 }
 
-frame_t can_frames[2];
+CanFrame can_frames[2];
 
 int main() {
 
   std::string ifname {"ens160"};
   std::string macaddr {"00:50:56:b0:74:a4"};
   std::string can_ifname {""};
-  Transmitter transmitter{"ens160", "00:50:56:b0:74:a4", "", ""};
+  Transmitter transmitter{"lo", "00:50:56:b0:74:a4", "", ""};
   transmitter.init();
   transmitter.start();
 
   std::signal(SIGINT, handleSignal);
   std::signal(SIGTERM, handleSignal);
 
-  frame_t *frame1 = &can_frames[0];
-  frame_t *frame2 = &can_frames[1];
-  frame1->cc.can_id = 0x123;
-  frame1->cc.len = 8;
-  frame2->cc.can_id = 0x456;
-  frame2->cc.len = 8;
+  CanFrame *frame1 = &can_frames[0];
+  CanFrame *frame2 = &can_frames[1];
+  frame1->type = CanVariant::CAN_VARIANT_CC;
+  frame1->data.cc.can_id = 0x123;
+  frame1->data.cc.len = 8;
+  frame2->type = CanVariant::CAN_VARIANT_CC;
+  frame2->data.cc.can_id = 0x456;
+  frame2->data.cc.len = 8;
   uint8_t payload1[8] = {0x0, 0x01, 0x02, 0x03};
   uint8_t payload2[8] = {0x4, 0x05, 0x06, 0x07};
-  memcpy(frame1->cc.data, payload1, 8);
-  memcpy(frame2->cc.data, payload2, 8);
-
+  memcpy(frame1->data.cc.data, payload1, 8);
+  memcpy(frame2->data.cc.data, payload2, 8);
 
   while(g_running) {
-    std::this_thread::sleep_for(std::chrono::seconds(1));
+    std::this_thread::sleep_for(std::chrono::seconds(5));
     if(!g_running) {
       break;
     }

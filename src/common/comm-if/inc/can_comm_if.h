@@ -35,8 +35,8 @@
 
 #include <stdint.h>
 
-#define CAN_VARIANT_CC 0U
-#define CAN_VARIANT_FD 1U
+// #define CAN_VARIANT_CC 0U
+// #define CAN_VARIANT_FD 1U
 
 /**
  * Creates a CAN socket.

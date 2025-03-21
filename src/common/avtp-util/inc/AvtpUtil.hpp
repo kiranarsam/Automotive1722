@@ -50,9 +50,9 @@ private:
 
 public:
 
-  static int extractCanFramesFromAvtp(uint8_t* pdu, frame_t* can_frames, uint8_t* exp_cf_seqnum);
+  static int extractCanFramesFromAvtp(uint8_t* pdu, CanFrame* can_frames, uint8_t* exp_cf_seqnum);
 
-  static int insertCanFramesToAvtp(uint8_t* pdu, frame_t *can_frames, uint8_t num_acf_msgs, uint8_t cf_seq_num);
+  static int insertCanFramesToAvtp(uint8_t* pdu, CanFrame *can_frames, uint8_t num_acf_msgs, uint8_t cf_seq_num);
 
 private:
   static int isValidAcfPacket(uint8_t *acf_pdu);
@@ -61,7 +61,5 @@ private:
 
   static int updateCfLength(uint8_t* cf_pdu, uint64_t length, int use_tscf);
 
-  static int prepareAcfPacket(uint8_t* acf_pdu, frame_t* frame, Avtp_CanVariant_t can_variant);
-
-  static Avtp_CanVariant_t getCanVariant(int can_variant);
+  static int prepareAcfPacket(uint8_t* acf_pdu, CanFrame* frame);
 };
