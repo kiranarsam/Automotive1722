@@ -34,7 +34,7 @@
 #include <linux/can.h>
 
 enum class CanVariant {
-    CAN_VARIANT_CC,
+    CAN_VARIANT_CC = 0,
     CAN_VARIANT_FD
 };
 

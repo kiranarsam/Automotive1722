@@ -42,7 +42,7 @@
 
 #include "can_comm_if.h"
 
-int Comm_Can_SetupSocket(const char* can_ifname, uint8_t can_variant) {
+int Comm_Can_SetupSocket(const char* can_ifname, int can_variant) {
 
     int can_socket, res;
     struct sockaddr_can can_addr;
@@ -62,7 +62,7 @@ int Comm_Can_SetupSocket(const char* can_ifname, uint8_t can_variant) {
     can_addr.can_family = AF_CAN;
     can_addr.can_ifindex = ifr.ifr_ifindex;
 
-    if (can_variant == 1U) {
+    if (can_variant == 1) {
         int enable_canfx = 1;
         setsockopt(can_socket, SOL_CAN_RAW, CAN_RAW_FD_FRAMES,
                     &enable_canfx, sizeof(enable_canfx));

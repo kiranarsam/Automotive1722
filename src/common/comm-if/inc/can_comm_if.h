@@ -35,9 +35,6 @@
 
 #include <stdint.h>
 
-// #define CAN_VARIANT_CC 0U
-// #define CAN_VARIANT_FD 1U
-
 /**
  * Creates a CAN socket.
  *
@@ -45,6 +42,6 @@
  * @param can_variant CAN or CAN-FD
  * @returns CAN socket on success else the error
  */
-int Comm_Can_SetupSocket(const char* can_ifname, uint8_t can_variant);
+int Comm_Can_SetupSocket(const char* can_ifname, int can_variant);
 
 #endif /* CAN_COMM_IF_COMMON_H__ */

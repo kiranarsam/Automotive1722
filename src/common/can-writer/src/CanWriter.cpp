@@ -40,7 +40,7 @@ extern "C" {
 #include <iostream>
 
 CanWriter::CanWriter()
-  : m_ifname{}, m_can_variant{}, m_can_socket{-1}, m_is_initialized{false}
+  : m_ifname{}, m_can_socket{-1}, m_is_initialized{false}
 {
 
 }
@@ -60,11 +60,9 @@ void CanWriter::init(std::string &ifname, CanVariant can_variant)
       return;
     }
 
-    //m_can_variant = (can_variant == CanVariant::CAN_VARIANT_FD) ? 1U : 0U;
-    m_can_variant = static_cast<uint8_t>(can_variant);
-    std::cout << "Writer vCAN m_can_variant " <<  m_can_variant << std::endl;
+    auto can_type = static_cast<int>(can_variant);
 
-    m_can_socket = Comm_Can_SetupSocket(m_ifname.c_str(), m_can_variant);
+    m_can_socket = Comm_Can_SetupSocket(m_ifname.c_str(), can_type);
     if (m_can_socket < 0) {
       std::cout << "Failure to create can socket " << std::endl;
       return;

@@ -100,6 +100,7 @@ void Receiver::init()
 
 void Receiver::initSocketCan(bool enable)
 {
+  // TODO: option to choose CC or FD
   // Open a CAN socket for reading frames
   if(enable && !m_is_can_initialized) {
     m_can_writer.init(m_can_ifname, CanVariant::CAN_VARIANT_FD);
@@ -192,7 +193,7 @@ void Receiver::run()
         callback_data msg;
         CanFrame *frame = &can_frames[num];
         msg.name = m_channel_name;
-        std::cout << "Receiver: frame_type = " << (uint8_t)frame->type << std::endl;
+        std::cout << "Receiver: frame_type = " << static_cast<int>(frame->type) << std::endl;
         msg.cf.type = frame->type;
         std::memcpy(&(msg.cf.data), &frame->data, sizeof(CanCcFd));
         m_callback_handler.handleCallback(msg);

@@ -52,7 +52,5 @@ private:
 
   std::string m_ifname;
 
-  uint8_t m_can_variant;
-
   bool m_is_initialized;
 };

@@ -53,6 +53,7 @@ void handleSignal(int sig)
 
 void callbackHandler(callback_data &msg) {
   std::cout << "handler: received = " << msg.name << std::endl;
+  std::cout << "handler: type = " << static_cast<int>(msg.cf.type) << std::endl;
   std::cout << "handler: can_data = " << msg.cf.data.cc.can_id << std::endl;
 }
 
