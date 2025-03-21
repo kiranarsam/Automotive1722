@@ -45,7 +45,7 @@ class Transmitter
 {
 public:
 
-  Transmitter(const std::string &ifname, const std::string &macaddr, const std::string &can_ifname);
+  Transmitter(const std::string &ifname, const std::string &macaddr, const std::string &can_ifname, const std::string &channel_name);
 
   ~Transmitter();
 
@@ -68,6 +68,8 @@ private:
   std::string m_macaddr;
 
   std::string m_can_ifname;
+
+  std::string m_channel_name;
 
   int m_eth_fd;
 

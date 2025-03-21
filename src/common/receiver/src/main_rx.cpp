@@ -51,8 +51,9 @@ void handleSignal(int sig)
   }
 }
 
-void callbackHandler(int data) {
-  std::cout << "handler: received = " << data << std::endl;
+void callbackHandler(callback_data &msg) {
+  std::cout << "handler: received = " << msg.name << std::endl;
+  std::cout << "handler: can_data = " << msg.can_data.cc.can_id << std::endl;
 }
 
 int main() {
@@ -60,7 +61,7 @@ int main() {
   std::string ifname {"ens160"};
   std::string macaddr {"00:50:56:b0:74:a4"};
   std::string can_ifname {""};
-  Receiver receiver{"ens160", "00:50:56:b0:74:a4", ""};
+  Receiver receiver{"ens160", "00:50:56:b0:74:a4", "", ""};
 
   DataCallbackHandler handler;
   handler.registerCallback(&callbackHandler);

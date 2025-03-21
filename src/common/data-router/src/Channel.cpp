@@ -45,8 +45,8 @@ Channel::~Channel()
 void Channel::init()
 {
   if(!m_is_initialized) {
-    m_receiver = std::make_shared<Receiver>(m_ifname, m_macaddr, m_can_ifname_receiver);
-    m_transmitter = std::make_shared<Transmitter>(m_ifname, m_macaddr, m_can_ifname_transmitter);
+    m_receiver = std::make_shared<Receiver>(m_ifname, m_macaddr, m_can_ifname_receiver, m_channel_name);
+    m_transmitter = std::make_shared<Transmitter>(m_ifname, m_macaddr, m_can_ifname_transmitter, m_channel_name);
 
     m_is_initialized = true;
     std::cout << "Channel initialized " << std::endl;

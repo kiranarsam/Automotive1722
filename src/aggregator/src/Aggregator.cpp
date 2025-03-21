@@ -49,10 +49,11 @@ void Aggregator::createDataHandlers()
   for (auto &channel_name : channel_list)
   {
     std::cout << "Channel Name: " << channel_name << std::endl;
-    auto callback = [this](int data) {
+    auto callback = [this](callback_data &msg) {
       {
+        std::cout << "Aggregator: received data: " << msg.name << std::endl;
         std::unique_lock<std::mutex> lock(m_mutex);
-        m_queue.push(data);
+        m_queue.push(std::move(msg));
         m_cond_var.notify_one();
       }
     };
@@ -100,12 +101,14 @@ void Aggregator::run()
       break;
     }
     // retreive data
-    auto &data = m_queue.front();
+    auto &msg = m_queue.front();
+    lock.unlock();
+    // process over here
+    //std::cout << "Data = " << msg.name << std::endl;
+    m_handler.handleCallback(msg);
+
+    lock.lock();
     m_queue.pop();
     lock.unlock();
-
-    // process over here
-    std::cout << "Data = " << data << std::endl;
-    m_handler.handleCallback(data);
   }
 }

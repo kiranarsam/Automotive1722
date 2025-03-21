@@ -29,3 +29,8 @@ target_include_directories(test_receiver
 target_link_libraries(test_receiver
   receiver
 )
+
+install(TARGETS
+  test_receiver
+  DESTINATION "${CMAKE_INSTALL_PREFIX}"
+)

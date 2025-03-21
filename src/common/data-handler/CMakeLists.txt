@@ -7,4 +7,5 @@ add_library(datahandler STATIC
 target_include_directories(datahandler
   PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/inc
+    ${CMAKE_CURRENT_SOURCE_DIR}/../inc
 )

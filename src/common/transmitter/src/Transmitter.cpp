@@ -47,8 +47,8 @@ extern "C" {
 #define CAN_PAYLOAD_MAX_SIZE        16*4
 #define MAX_ETH_PDU_SIZE                1500
 
-Transmitter::Transmitter(const std::string &ifname, const std::string &macaddr, const std::string &can_ifname)
-  : m_ifname{ifname}, m_macaddr{macaddr}, m_can_ifname{can_ifname}
+Transmitter::Transmitter(const std::string &ifname, const std::string &macaddr, const std::string &can_ifname, const std::string &channel_name)
+  : m_ifname{ifname}, m_macaddr{macaddr}, m_can_ifname{can_ifname}, m_channel_name{channel_name}
 {
   m_is_can_enabled = false;
   m_is_can_initialized = false;

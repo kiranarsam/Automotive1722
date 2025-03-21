@@ -24,8 +24,8 @@ void handleSignal(int sig)
 
 int main() {
 
-  auto callback = [](int data) {
-    std::cout << "Main data = " << data << std::endl;
+  auto callback = [](callback_data &msg) {
+    std::cout << "Main data = " << msg.name << std::endl;
   };
 
   DataCallbackHandler handler;

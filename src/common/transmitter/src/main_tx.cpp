@@ -62,7 +62,7 @@ int main() {
   std::string ifname {"ens160"};
   std::string macaddr {"00:50:56:b0:74:a4"};
   std::string can_ifname {""};
-  Transmitter transmitter{"ens160", "00:50:56:b0:74:a4", ""};
+  Transmitter transmitter{"ens160", "00:50:56:b0:74:a4", "", ""};
   transmitter.init();
   transmitter.start();
 

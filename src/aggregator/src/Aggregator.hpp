@@ -27,7 +27,7 @@ class Aggregator : public IAggregator
     std::mutex m_mutex;
     std::condition_variable m_cond_var;
 
-    std::queue<int> m_queue;
+    std::queue<callback_data> m_queue;
     DataRouter m_data_router;
     DataCallbackHandler m_handler;
 

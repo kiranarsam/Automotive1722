@@ -39,6 +39,7 @@ extern "C" {
 
 #include <iostream>
 #include <functional>
+#include <cstring>
 
 #include "Receiver.hpp"
 #include "CommonUtils.hpp"
@@ -48,8 +49,8 @@ extern "C" {
 #define MAX_ETH_PDU_SIZE                1500
 #define MAX_CAN_FRAMES_IN_ACF           15
 
-Receiver::Receiver(const std::string &ifname, const std::string &macaddr, const std::string &can_ifname)
-  : m_ifname{ifname}, m_macaddr{macaddr}, m_can_ifname{can_ifname}
+Receiver::Receiver(const std::string &ifname, const std::string &macaddr, const std::string &can_ifname, const std::string &channel_name)
+  : m_ifname{ifname}, m_macaddr{macaddr}, m_can_ifname{can_ifname}, m_channel_name{channel_name}
 {
   m_is_can_enabled = false;
   m_is_can_initialized = false;
@@ -174,8 +175,12 @@ void Receiver::run()
       num_can_msgs = AvtpUtil::extractCanFramesFromAvtp(pdu, can_frames, &exp_cf_seqnum);
 
       exp_cf_seqnum++;
-
-      m_callback_handler.handleCallback(2025);
+      for(auto num = 0; num < num_can_msgs; num++) {
+        callback_data msg;
+        msg.name = m_channel_name;
+        std::memcpy(&(msg.can_data), &can_frames[num], sizeof(frame_t));
+        m_callback_handler.handleCallback(msg);
+      }
 
       if(m_is_can_enabled) {
         m_can_writer.sendData(can_frames, num_can_msgs);

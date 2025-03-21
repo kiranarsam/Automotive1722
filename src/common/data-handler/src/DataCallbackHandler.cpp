@@ -12,15 +12,15 @@ DataCallbackHandler::~DataCallbackHandler()
   std::cout << "~DataCallbackHandler" << std::endl;
 }
 
-void DataCallbackHandler::registerCallback(std::function<void(int)> callback)
+void DataCallbackHandler::registerCallback(canCallbackHandler callback)
 {
   m_callback = callback;
 }
 
-void DataCallbackHandler::handleCallback(int data)
+void DataCallbackHandler::handleCallback(callback_data &msg)
 {
   if(m_callback) {
-    m_callback(data);
+    m_callback(msg);
   }
 }
 
