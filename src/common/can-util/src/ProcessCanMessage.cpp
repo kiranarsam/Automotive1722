@@ -34,7 +34,7 @@ extern "C" {
 
 #include "ProcessCanMessage.hpp"
 
-void ProcessCanMessage::setValue(std::string &name, uint64_t value, double scaled, can_message &data_out)
+void ProcessCanMessage::setValue(std::string &name, uint64_t value, double scaled, CanMessage &data_out)
 {
   for (auto signal = data_out.signals.begin(); signal != data_out.signals.end(); signal++) {
     if (name.compare(signal->name) == 0) {
@@ -50,7 +50,7 @@ void ProcessCanMessage::setValue(std::string &name, uint64_t value, double scale
  * All rights reserved.
  * Content is simplified to C++ usage.
  */
-void ProcessCanMessage::process(uint8_t *can_data, can_message &msg, can_message &data_out)
+void ProcessCanMessage::process(uint8_t *can_data, CanMessage &msg, CanMessage &data_out)
 {
   uint64_t value = 0;
   double scaled = 0.;

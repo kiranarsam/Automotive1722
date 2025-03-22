@@ -40,8 +40,8 @@ private:
   ~ProcessCanMessage() = delete;
 
 public:
-  static void process(uint8_t *can_data, can_message &msg, can_message &data_out);
+  static void process(uint8_t *can_data, CanMessage &msg, CanMessage &data_out);
 
 private:
-  static void setValue(std::string &name, uint64_t value, double scaled, can_message &data_out);
+  static void setValue(std::string &name, uint64_t value, double scaled, CanMessage &data_out);
 };

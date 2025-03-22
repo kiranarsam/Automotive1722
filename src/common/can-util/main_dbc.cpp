@@ -32,7 +32,7 @@
 
 int main()
 {
-  std::unordered_map<uint32_t, can_message> database;
+  std::unordered_map<uint32_t, CanMessage> database;
   std::string filename = "test.dbc";
 
   CanDbc canDbc{filename, database};

@@ -32,7 +32,7 @@
 
 #include <cstdio>
 
-CanDbc::CanDbc(std::string &filename, std::unordered_map<uint32_t, can_message> &can_db) : m_is_initialized{false}
+CanDbc::CanDbc(std::string &filename, std::unordered_map<uint32_t, CanMessage> &can_db) : m_is_initialized{false}
 {
   init(filename, can_db);
 }
@@ -41,7 +41,7 @@ CanDbc::~CanDbc()
 {
 }
 
-void CanDbc::init(std::string &filename, std::unordered_map<uint32_t, can_message> &can_db)
+void CanDbc::init(std::string &filename, std::unordered_map<uint32_t, CanMessage> &can_db)
 {
   if (!m_is_initialized) {
     std::ifstream fp(filename);
@@ -63,7 +63,7 @@ void CanDbc::init(std::string &filename, std::unordered_map<uint32_t, can_messag
  * All rights reserved.
  * Content is simplified to C++ usage.
  */
-void CanDbc::parse(std::ifstream &fp, std::unordered_map<uint32_t, can_message> &can_db)
+void CanDbc::parse(std::ifstream &fp, std::unordered_map<uint32_t, CanMessage> &can_db)
 {
   char frameName[512], sender[512];
   char signalName[512], signedState, unit[512], receiverList[512];

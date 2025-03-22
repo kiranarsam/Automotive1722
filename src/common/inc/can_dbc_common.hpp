@@ -33,7 +33,7 @@
 #include <string>
 #include <vector>
 
-struct can_signal {
+struct CanSignal {
   std::string name;
   int startBit;
   int signalLength;
@@ -50,9 +50,9 @@ struct can_signal {
   uint8_t number;
 };
 
-struct can_message {
+struct CanMessage {
   uint32_t canID;
   std::string name;
   uint8_t isMultiplexed;
-  std::vector<can_signal> signals;
+  std::vector<CanSignal> signals;
 };
