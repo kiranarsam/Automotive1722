@@ -28,13 +28,12 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <mutex>
+#include <chrono>
 #include <condition_variable>
 #include <csignal>
-#include <thread>
-#include <chrono>
-
 #include <cstring>
+#include <mutex>
+#include <thread>
 
 #include "Transmitter.hpp"
 
@@ -48,7 +47,7 @@ void handleSignal(int sig);
 
 void handleSignal(int sig)
 {
-  if((sig == SIGINT) || (sig == SIGTERM)) {
+  if ((sig == SIGINT) || (sig == SIGTERM)) {
     g_ready = true;
     g_running = false;
     g_cond_var.notify_one();
@@ -57,11 +56,11 @@ void handleSignal(int sig)
 
 CanFrame can_frames[2];
 
-int main() {
-
-  std::string ifname {"ens160"};
-  std::string macaddr {"00:50:56:b0:74:a4"};
-  std::string can_ifname {""};
+int main()
+{
+  std::string ifname{"ens160"};
+  std::string macaddr{"00:50:56:b0:74:a4"};
+  std::string can_ifname{""};
   Transmitter transmitter{"lo", "00:50:56:b0:74:a4", "", ""};
   transmitter.init();
   transmitter.start();
@@ -82,9 +81,9 @@ int main() {
   memcpy(frame1->data.cc.data, payload1, 8);
   memcpy(frame2->data.cc.data, payload2, 8);
 
-  while(g_running) {
+  while (g_running) {
     std::this_thread::sleep_for(std::chrono::seconds(5));
-    if(!g_running) {
+    if (!g_running) {
       break;
     }
 

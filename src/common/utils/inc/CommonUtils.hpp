@@ -34,7 +34,6 @@
 
 class CommonUtils
 {
-  public:
-
-    static int getMacAddress(std::string &macaddr, uint8_t *address);
+public:
+  static int getMacAddress(std::string &macaddr, uint8_t *address);
 };

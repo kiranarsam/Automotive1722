@@ -33,24 +33,24 @@
 #include <unistd.h>
 
 extern "C" {
-#include "ether_comm_if.h"
 #include "can_comm_if.h"
+#include "ether_comm_if.h"
 #include "lo_comm_if.h"
 }
 
-#include <iostream>
-#include <functional>
 #include <cstring>
+#include <functional>
+#include <iostream>
 
-#include "Receiver.hpp"
-#include "CommonUtils.hpp"
 #include "AvtpUtil.hpp"
+#include "CommonUtils.hpp"
+#include "Receiver.hpp"
 
+#define MAX_ETH_PDU_SIZE      1500
+#define MAX_CAN_FRAMES_IN_ACF 15
 
-#define MAX_ETH_PDU_SIZE                1500
-#define MAX_CAN_FRAMES_IN_ACF           15
-
-Receiver::Receiver(const std::string &ifname, const std::string &macaddr, const std::string &can_ifname, const std::string &channel_name)
+Receiver::Receiver(const std::string &ifname, const std::string &macaddr, const std::string &can_ifname,
+                   const std::string &channel_name)
   : m_ifname{ifname}, m_macaddr{macaddr}, m_can_ifname{can_ifname}, m_channel_name{channel_name}
 {
   m_is_can_enabled = false;
@@ -60,7 +60,6 @@ Receiver::Receiver(const std::string &ifname, const std::string &macaddr, const 
 
 Receiver::~Receiver()
 {
-
 }
 
 void Receiver::init()
@@ -68,10 +67,10 @@ void Receiver::init()
   if (!m_is_initialized) {
     int res = -1;
 
-    if(m_ifname == "lo") {
+    if (m_ifname == "lo") {
       // Loopback address
       m_eth_fd = Comm_Lo_CreateSocket(m_ifname.c_str(), ETH_P_TSN, &sk_ll_addr);
-      m_dest_addr = (struct sockaddr*) &sk_ll_addr;
+      m_dest_addr = (struct sockaddr *)&sk_ll_addr;
       if (m_eth_fd < 0) {
         std::cout << "Failue to create listener ethernet socket" << std::endl;
         return;
@@ -81,7 +80,7 @@ void Receiver::init()
       uint8_t addr[ETH_ALEN];
 
       res = CommonUtils::getMacAddress(m_macaddr, addr);
-      if(res < 0) {
+      if (res < 0) {
         std::cout << "Invalid mac address" << std::endl;
         return;
       }
@@ -102,7 +101,7 @@ void Receiver::initSocketCan(bool enable)
 {
   // TODO: option to choose CC or FD
   // Open a CAN socket for reading frames
-  if(enable && !m_is_can_initialized) {
+  if (enable && !m_is_can_initialized) {
     m_can_writer.init(m_can_ifname, CanVariant::CAN_VARIANT_FD);
     m_is_can_initialized = true;
     m_is_can_enabled = true;
@@ -121,7 +120,7 @@ void Receiver::unRegisterCallbackHandler()
 
 void Receiver::start()
 {
-  if(m_is_initialized) {
+  if (m_is_initialized) {
     m_running = true;
     m_receiver_thread = std::thread{std::bind(&Receiver::run, this)};
   }
@@ -131,15 +130,14 @@ void Receiver::stop()
 {
   m_running = false;
   if (std::this_thread::get_id() != m_receiver_thread.get_id()) {
-    if (m_receiver_thread.joinable())
-    {
+    if (m_receiver_thread.joinable()) {
       m_receiver_thread.join();
     }
   } else {
     m_receiver_thread.detach();
   }
 
-  if(m_is_can_enabled) {
+  if (m_is_can_enabled) {
     m_can_writer.stop();
   }
 }
@@ -156,20 +154,19 @@ void Receiver::run()
   m_poll_fds.fd = m_eth_fd;
   m_poll_fds.events = POLLIN;
 
-  while(m_running)
-  {
+  while (m_running) {
     // add polling to avoid blocking calls
     res = poll(&m_poll_fds, 1, 500);
     if (res < 0) {
-      std::cout <<"Failed poll() call" << std::endl;
+      std::cout << "Failed poll() call" << std::endl;
       // destroy handler
       return;
     }
 
     // check for m_running
-    if(!m_running) {
+    if (!m_running) {
       // destroy handler
-      std::cout <<"Exited thread " << std::endl;
+      std::cout << "Exited thread " << std::endl;
       return;
     }
 
@@ -179,17 +176,16 @@ void Receiver::run()
     }
 
     if (m_poll_fds.revents & POLLIN) {
-
       pdu_length = recv(m_eth_fd, pdu, MAX_ETH_PDU_SIZE, 0);
       if (pdu_length < 0 || pdu_length > MAX_ETH_PDU_SIZE) {
-          std::cout << "Failed to receive data" << std::endl;
-          continue;
+        std::cout << "Failed to receive data" << std::endl;
+        continue;
       }
 
       num_can_msgs = AvtpUtil::extractCanFramesFromAvtp(pdu, can_frames, &exp_cf_seqnum);
 
       exp_cf_seqnum++;
-      for(auto num = 0; num < num_can_msgs; num++) {
+      for (auto num = 0; num < num_can_msgs; num++) {
         callback_data msg;
         CanFrame *frame = &can_frames[num];
         msg.name = m_channel_name;
@@ -199,7 +195,7 @@ void Receiver::run()
         m_callback_handler.handleCallback(msg);
       }
 
-      if(m_is_can_enabled) {
+      if (m_is_can_enabled) {
         m_can_writer.sendData(can_frames, num_can_msgs);
       }
     }

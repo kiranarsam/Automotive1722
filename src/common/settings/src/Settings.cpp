@@ -1,8 +1,8 @@
 #include "Settings.hpp"
 
+#include <iostream>
 #include <regex>
 #include <vector>
-#include <iostream>
 
 const std::string SettingsKey::SECTION_DEFAULT = "DEFAULT";
 const std::string SettingsKey::NUM_CHANNEL = "NUM_CHANNEL";
@@ -31,8 +31,7 @@ const std::string Settings::getData(const std::string &section, const std::strin
 {
   try {
     return m_settings_map.at(section).at(key);
-  }
-  catch(...) {
+  } catch (...) {
     // return default value in case of exception
     return "";
   }
@@ -41,21 +40,17 @@ const std::string Settings::getData(const std::string &section, const std::strin
 void Settings::load()
 {
   bool is_file_parsed = false;
-  std::vector<std::string> files = {Settings::SETTINGS_FILE_NAME,
-                                    "./settings.dat", "/etc/settings/settings.dat"};
-  for (const auto &file : files)
-  {
+  std::vector<std::string> files = {Settings::SETTINGS_FILE_NAME, "./settings.dat", "/etc/settings/settings.dat"};
+  for (const auto &file : files) {
     std::ifstream in_file(file);
-    if (in_file.is_open())
-    {
+    if (in_file.is_open()) {
       parse(in_file);
       in_file.close();
       is_file_parsed = true;
     }
   }
 
-  if (!is_file_parsed)
-  {
+  if (!is_file_parsed) {
     std::cout << "Error opening settings.dat file " << std::endl;
   }
 }
@@ -65,34 +60,26 @@ void Settings::parse(std::ifstream &ins)
   std::string line;
   std::string section_name;
   std::regex re("=");
-  while (std::getline(ins, line))
-  {
+  while (std::getline(ins, line)) {
     bool is_section = false;
-    if ((line.find('[') != std::string::npos) &&
-        (line.rfind(']') != std::string::npos))
-    {
+    if ((line.find('[') != std::string::npos) && (line.rfind(']') != std::string::npos)) {
       is_section = true;
     }
 
-    if (is_section)
-    {
+    if (is_section) {
       int start_pos = line.find('[') + 1;
       int end_pos = line.rfind(']') - 1;
       section_name = line.substr(start_pos, end_pos);
-    }
-    else
-    {
+    } else {
       std::sregex_token_iterator it(line.begin(), line.end(), re, -1);
       std::sregex_token_iterator end;
 
       std::vector<std::string> tokens;
-      for (; it != end; ++it)
-      {
+      for (; it != end; ++it) {
         tokens.push_back(trim(*it));
       }
 
-      if (tokens.size() != 2)
-      {
+      if (tokens.size() != 2) {
         continue;
       }
 

@@ -29,10 +29,19 @@
  */
 
 #include "Channel.hpp"
+
 #include <iostream>
 
-Channel::Channel(const std::string &ifname, const std::string &macaddr, const std::string &can_receiver, const std::string &can_transmitter, const std::string &channel_name)
-  : m_ifname{ifname}, m_macaddr{macaddr}, m_can_ifname_receiver{can_receiver}, m_can_ifname_transmitter{can_transmitter}, m_receiver{nullptr}, m_transmitter{nullptr}, m_is_initialized{false}, m_channel_name{channel_name}
+Channel::Channel(const std::string &ifname, const std::string &macaddr, const std::string &can_receiver,
+                 const std::string &can_transmitter, const std::string &channel_name)
+  : m_ifname{ifname},
+    m_macaddr{macaddr},
+    m_can_ifname_receiver{can_receiver},
+    m_can_ifname_transmitter{can_transmitter},
+    m_receiver{nullptr},
+    m_transmitter{nullptr},
+    m_is_initialized{false},
+    m_channel_name{channel_name}
 {
   init();
 }
@@ -44,7 +53,7 @@ Channel::~Channel()
 
 void Channel::init()
 {
-  if(!m_is_initialized) {
+  if (!m_is_initialized) {
     m_receiver = std::make_shared<Receiver>(m_ifname, m_macaddr, m_can_ifname_receiver, m_channel_name);
     m_transmitter = std::make_shared<Transmitter>(m_ifname, m_macaddr, m_can_ifname_transmitter, m_channel_name);
 

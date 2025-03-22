@@ -1,16 +1,17 @@
 
 #pragma once
 
-#include "IeeeCanCommon.hpp"
-#include <string>
 #include <functional>
+#include <string>
+
+#include "IeeeCanCommon.hpp"
 
 typedef struct {
   std::string name;
   CanFrame cf;
 } callback_data;
 
-typedef std::function<void (callback_data &)> canCallbackHandler;
+typedef std::function<void(callback_data &)> canCallbackHandler;
 
 class DataCallbackHandler
 {

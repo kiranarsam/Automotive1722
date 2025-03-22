@@ -32,30 +32,29 @@
 
 extern "C" {
 #include <stdio.h>
+
 #include "avtp/acf/Can.h"
 }
 
 #include "IeeeCanCommon.hpp"
 
-#define STREAM_ID                       0xAABBCCDDEEFF0001
-#define USER_CAN_VARIANT                AVTP_CAN_FD
+#define STREAM_ID        0xAABBCCDDEEFF0001
+#define USER_CAN_VARIANT AVTP_CAN_FD
 
 class AvtpUtil final
 {
 private:
-
   AvtpUtil() = delete;
 
   ~AvtpUtil() = delete;
 
 public:
-
   static int extractCanFramesFromAvtp(uint8_t* pdu, CanFrame* can_frames, uint8_t* exp_cf_seqnum);
 
-  static int insertCanFramesToAvtp(uint8_t* pdu, CanFrame *can_frames, uint8_t num_acf_msgs, uint8_t cf_seq_num);
+  static int insertCanFramesToAvtp(uint8_t* pdu, CanFrame* can_frames, uint8_t num_acf_msgs, uint8_t cf_seq_num);
 
 private:
-  static int isValidAcfPacket(uint8_t *acf_pdu);
+  static int isValidAcfPacket(uint8_t* acf_pdu);
 
   static int initCfPdu(uint8_t* pdu, int use_tscf, int seq_num);
 

@@ -2,8 +2,7 @@
 
 #include <string>
 
-enum class SettingsType
-{
+enum class SettingsType {
   SETTINGS_TYPE_DEFAULT,
   SETTINGS_TYPE_CHANNEL
 };
@@ -13,6 +12,7 @@ class SettingsKey final
 private:
   SettingsKey() = delete;
   ~SettingsKey() = delete;
+
 public:
   static const std::string SECTION_DEFAULT;
   static const std::string NUM_CHANNEL;

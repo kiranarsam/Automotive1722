@@ -47,7 +47,6 @@ public:
   void stop();
 
 private:
-
   int m_can_socket;
 
   std::string m_ifname;

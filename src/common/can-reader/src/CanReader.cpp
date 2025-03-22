@@ -34,29 +34,25 @@
 #include <unistd.h>
 
 extern "C" {
-  #include "can_comm_if.h"
+#include "can_comm_if.h"
 }
 
-#include <iostream>
 #include <cstring>
+#include <iostream>
 
-CanReader::CanReader()
-  : m_ifname{}, m_can_socket{-1}, m_is_initialized{false}
+CanReader::CanReader() : m_ifname{}, m_can_socket{-1}, m_is_initialized{false}
 {
-
 }
 
 CanReader::~CanReader()
 {
-
 }
 
 void CanReader::init(std::string &ifname, CanVariant can_variant)
 {
-  if (!m_is_initialized)
-  {
+  if (!m_is_initialized) {
     m_ifname = ifname;
-    if(m_ifname.empty()) {
+    if (m_ifname.empty()) {
       std::cout << "vCAN ifname is empty" << std::endl;
       return;
     }
@@ -84,22 +80,19 @@ void CanReader::receiveData(CanFrame *can_frames, uint8_t num_acf_msgs)
     //                of CAN frames.
     res = read(m_can_socket, &cfd, CANFD_MTU);
 
-    CanFrame* frame = &(can_frames[i]);
+    CanFrame *frame = &(can_frames[i]);
 
-    if (res == CANFD_MTU)
-    {
+    if (res == CANFD_MTU) {
       std::memcpy(&frame->data.fd, &cfd, CANFD_MTU);
       frame->type = CanVariant::CAN_VARIANT_FD;
-    }
-    else if (res == CAN_MTU)
-    {
+    } else if (res == CAN_MTU) {
       std::memcpy(&frame->data.cc, &cfd, CAN_MTU);
       frame->type = CanVariant::CAN_VARIANT_CC;
     }
 
     if (!res) {
-        std::cout << "Error reading CAN frames" << std::endl;
-        continue;
+      std::cout << "Error reading CAN frames" << std::endl;
+      continue;
     }
     i++;
   }
@@ -112,7 +105,7 @@ int CanReader::getCanSocket()
 
 void CanReader::stop()
 {
-  if(m_is_initialized) {
+  if (m_is_initialized) {
     close(m_can_socket);
 
     m_is_initialized = false;

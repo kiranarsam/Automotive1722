@@ -1,6 +1,8 @@
 #include "SettingsFactory.hpp"
-#include "Settings.hpp"
+
 #include <memory>
+
+#include "Settings.hpp"
 
 std::shared_ptr<ISettings> SettingsFactory::GetInstance()
 {

@@ -31,9 +31,9 @@
 #pragma once
 
 /* System files */
+#include <linux/if_packet.h>
 #include <poll.h>
 #include <sys/socket.h>
-#include <linux/if_packet.h>
 
 #include <string>
 #include <thread>
@@ -44,8 +44,8 @@
 class Receiver
 {
 public:
-
-  Receiver(const std::string &ifname, const std::string &macaddr, const std::string &can_ifname, const std::string &channel_name);
+  Receiver(const std::string &ifname, const std::string &macaddr, const std::string &can_ifname,
+           const std::string &channel_name);
 
   ~Receiver();
 
@@ -62,7 +62,6 @@ public:
   void stop();
 
 private:
-
   void run();
 
   std::string m_ifname;
@@ -87,7 +86,7 @@ private:
 
   struct sockaddr_ll sk_ll_addr;
 
-  struct sockaddr* m_dest_addr;
+  struct sockaddr *m_dest_addr;
 
   bool m_is_can_initialized;
 

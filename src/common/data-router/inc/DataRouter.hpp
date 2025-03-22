@@ -34,6 +34,7 @@
 #include <string>
 #include <unordered_map>
 #include <vector>
+
 #include "IChannel.hpp"
 
 class DataRouter
@@ -55,7 +56,6 @@ public:
   void publishFrames(const std::string &channel_name, CanFrame *frames, uint8_t num_msgs);
 
 private:
-
   void init();
   bool m_is_initialized;
   std::unordered_map<std::string, std::shared_ptr<IChannel>> m_channels;

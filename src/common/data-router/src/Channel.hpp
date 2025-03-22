@@ -30,8 +30,9 @@
 
 #pragma once
 
-#include <string>
 #include <memory>
+#include <string>
+
 #include "IChannel.hpp"
 #include "Receiver.hpp"
 #include "Transmitter.hpp"
@@ -39,7 +40,8 @@
 class Channel : public IChannel
 {
 public:
-  Channel(const std::string &ifname, const std::string &macaddr, const std::string &can_receiver, const std::string &can_transmitter, const std::string &channel_name);
+  Channel(const std::string &ifname, const std::string &macaddr, const std::string &can_receiver,
+          const std::string &can_transmitter, const std::string &channel_name);
   ~Channel();
 
   void start();
@@ -57,7 +59,6 @@ public:
   void sendFrames(CanFrame *frames, uint8_t num_msgs);
 
 private:
-
   void init();
 
   std::string m_ifname;

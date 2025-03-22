@@ -1,10 +1,10 @@
 
 #include "DataCallbackHandler.hpp"
+
 #include <iostream>
 
 DataCallbackHandler::DataCallbackHandler()
 {
-
 }
 
 DataCallbackHandler::~DataCallbackHandler()
@@ -19,7 +19,7 @@ void DataCallbackHandler::registerCallback(canCallbackHandler callback)
 
 void DataCallbackHandler::handleCallback(callback_data &msg)
 {
-  if(m_callback) {
+  if (m_callback) {
     m_callback(msg);
   }
 }

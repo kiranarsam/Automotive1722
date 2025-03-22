@@ -1,9 +1,10 @@
-#include "SettingsFactory.hpp"
 #include <iostream>
 #include <string>
 
-int main() {
+#include "SettingsFactory.hpp"
 
+int main()
+{
   auto settings = SettingsFactory::GetInstance();
 
   // std::string channel_name = SettingsKey::SECTION_CHANNEL + "2";

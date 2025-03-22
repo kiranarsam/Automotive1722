@@ -31,21 +31,21 @@
 #pragma once
 
 /* System files */
+#include <linux/if_packet.h>
 #include <poll.h>
 #include <sys/socket.h>
-#include <linux/if_packet.h>
 
 #include <string>
 #include <thread>
 
-#include "IeeeCanCommon.hpp"
 #include "CanReader.hpp"
+#include "IeeeCanCommon.hpp"
 
 class Transmitter
 {
 public:
-
-  Transmitter(const std::string &ifname, const std::string &macaddr, const std::string &can_ifname, const std::string &channel_name);
+  Transmitter(const std::string &ifname, const std::string &macaddr, const std::string &can_ifname,
+              const std::string &channel_name);
 
   ~Transmitter();
 
@@ -60,7 +60,6 @@ public:
   void sendPacket(CanFrame *can_frames, uint8_t num_acf_msgs);
 
 private:
-
   void run();
 
   std::string m_ifname;
@@ -85,10 +84,9 @@ private:
 
   struct sockaddr_ll sk_ll_addr;
 
-  struct sockaddr* m_dest_addr;
+  struct sockaddr *m_dest_addr;
 
   CanReader m_can_reader;
 
   bool m_is_can_initialized;
-
 };

@@ -28,13 +28,13 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <mutex>
 #include <condition_variable>
 #include <csignal>
 #include <iostream>
+#include <mutex>
 
-#include "Receiver.hpp"
 #include "DataCallbackHandler.hpp"
+#include "Receiver.hpp"
 
 std::mutex g_mutex;
 std::condition_variable g_cond_var;
@@ -45,23 +45,24 @@ void handleSignal(int sig);
 
 void handleSignal(int sig)
 {
-  if((sig == SIGINT) || (sig == SIGTERM)) {
+  if ((sig == SIGINT) || (sig == SIGTERM)) {
     g_ready = true;
     g_cond_var.notify_one();
   }
 }
 
-void callbackHandler(callback_data &msg) {
+void callbackHandler(callback_data &msg)
+{
   std::cout << "handler: received = " << msg.name << std::endl;
   std::cout << "handler: type = " << static_cast<int>(msg.cf.type) << std::endl;
   std::cout << "handler: can_data = " << msg.cf.data.cc.can_id << std::endl;
 }
 
-int main() {
-
-  std::string ifname {"ens160"};
-  std::string macaddr {"00:50:56:b0:74:a4"};
-  std::string can_ifname {""};
+int main()
+{
+  std::string ifname{"ens160"};
+  std::string macaddr{"00:50:56:b0:74:a4"};
+  std::string can_ifname{""};
   Receiver receiver{"lo", "00:50:56:b0:74:a4", "", ""};
 
   DataCallbackHandler handler;

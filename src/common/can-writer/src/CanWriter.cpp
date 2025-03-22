@@ -34,28 +34,24 @@
 #include <unistd.h>
 
 extern "C" {
-  #include "can_comm_if.h"
+#include "can_comm_if.h"
 }
 
 #include <iostream>
 
-CanWriter::CanWriter()
-  : m_ifname{}, m_can_socket{-1}, m_is_initialized{false}
+CanWriter::CanWriter() : m_ifname{}, m_can_socket{-1}, m_is_initialized{false}
 {
-
 }
 
 CanWriter::~CanWriter()
 {
-
 }
 
 void CanWriter::init(std::string &ifname, CanVariant can_variant)
 {
-  if (!m_is_initialized)
-  {
+  if (!m_is_initialized) {
     m_ifname = ifname;
-    if(m_ifname.empty()) {
+    if (m_ifname.empty()) {
       std::cout << "vCAN ifname is empty" << std::endl;
       return;
     }
@@ -76,23 +72,23 @@ void CanWriter::sendData(CanFrame *can_frames, uint8_t num_can_msgs)
 {
   int res = -1;
   for (int i = 0; i < num_can_msgs; i++) {
-    CanFrame* frame = &can_frames[i];
+    CanFrame *frame = &can_frames[i];
     if (frame->type == CanVariant::CAN_VARIANT_FD) {
-        res = write(m_can_socket, &frame->data.fd, CANFD_MTU);
+      res = write(m_can_socket, &frame->data.fd, CANFD_MTU);
     } else if (frame->type == CanVariant::CAN_VARIANT_CC) {
-        res = write(m_can_socket, &frame->data.cc, CAN_MTU);
+      res = write(m_can_socket, &frame->data.cc, CAN_MTU);
     }
 
-    if(res < 0) {
-        std::cout << "Failed to write to CAN bus" << std::endl;
-        continue;
+    if (res < 0) {
+      std::cout << "Failed to write to CAN bus" << std::endl;
+      continue;
     }
   }
 }
 
 void CanWriter::stop()
 {
-  if(m_is_initialized) {
+  if (m_is_initialized) {
     close(m_can_socket);
 
     m_is_initialized = false;

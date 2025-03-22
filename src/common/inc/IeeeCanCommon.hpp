@@ -34,17 +34,17 @@
 #include <linux/can.h>
 
 enum class CanVariant {
-    CAN_VARIANT_CC = 0,
-    CAN_VARIANT_FD
+  CAN_VARIANT_CC = 0,
+  CAN_VARIANT_FD
 };
 
 /* CAN CC/FD frame union */
 typedef union CanCcFd_uTag_ {
-    struct can_frame cc;
-    struct canfd_frame fd;
+  struct can_frame cc;
+  struct canfd_frame fd;
 } CanCcFd;
 
 typedef struct CanFrameTag {
-    CanVariant type;
-    CanCcFd data;
+  CanVariant type;
+  CanCcFd data;
 } CanFrame;
