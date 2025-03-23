@@ -34,7 +34,7 @@ extern "C" {
 
 #include "ProcessCanMessage.hpp"
 
-void ProcessCanMessage::setValue(std::string &name, uint64_t value, double scaled, CanMessage &data_out)
+void ProcessCanMessage::setValue(std::string &name, uint64_t value, double scaled, DbCanMessage &data_out)
 {
   for (auto signal = data_out.signals.begin(); signal != data_out.signals.end(); signal++) {
     if (name.compare(signal->name) == 0) {
@@ -50,28 +50,28 @@ void ProcessCanMessage::setValue(std::string &name, uint64_t value, double scale
  * All rights reserved.
  * Content is simplified to C++ usage.
  */
-void ProcessCanMessage::process(uint8_t *can_data, CanMessage &msg, CanMessage &data_out)
+void ProcessCanMessage::process(uint8_t *can_data, DbCanMessage &msg, DbCanMessage &data_out)
 {
   uint64_t value = 0;
   double scaled = 0.;
-  unsigned int muxerVal = 0;
+  unsigned int muxer_val = 0;
 
-  if (msg.isMultiplexed) {
+  if (msg.is_multiplexed) {
     // find multiplexer:
     for (auto signal = msg.signals.begin(); signal != msg.signals.end(); signal++) {
-      if (1 == signal->isMultiplexer) {
-        muxerVal = Can_Codec_ExtractSignal(can_data, signal->startBit, signal->signalLength,
+      if (1 == signal->is_multiplexer) {
+        muxer_val = Can_Codec_ExtractSignal(can_data, signal->start_bit, signal->signal_length,
                                            (bool)signal->is_big_endian, signal->is_signed);
-        scaled = Can_Codec_ToPhysicalValue(muxerVal, signal->factor, signal->offset, signal->is_signed);
-        ProcessCanMessage::setValue(signal->name, muxerVal, scaled, data_out);
+        scaled = Can_Codec_ToPhysicalValue(muxer_val, signal->factor, signal->offset, signal->is_signed);
+        ProcessCanMessage::setValue(signal->name, muxer_val, scaled, data_out);
         break;
       }
     }
 
     for (auto signal = msg.signals.begin(); signal != msg.signals.end(); signal++) {
       // decode not multiplexed signals and signals with correct muxVal
-      if (0 == signal->isMultiplexer || (2 == signal->isMultiplexer && signal->muxId == muxerVal)) {
-        value = Can_Codec_ExtractSignal(can_data, signal->startBit, signal->signalLength, (bool)signal->is_big_endian,
+      if (0 == signal->is_multiplexer || (2 == signal->is_multiplexer && signal->mux_id == muxer_val)) {
+        value = Can_Codec_ExtractSignal(can_data, signal->start_bit, signal->signal_length, (bool)signal->is_big_endian,
                                         signal->is_signed);
         scaled = Can_Codec_ToPhysicalValue(value, signal->factor, signal->offset, signal->is_signed);
         ProcessCanMessage::setValue(signal->name, value, scaled, data_out);
@@ -79,7 +79,7 @@ void ProcessCanMessage::process(uint8_t *can_data, CanMessage &msg, CanMessage &
     }
   } else {
     for (auto signal = msg.signals.begin(); signal != msg.signals.end(); signal++) {
-      value = Can_Codec_ExtractSignal(can_data, signal->startBit, signal->signalLength, (bool)signal->is_big_endian,
+      value = Can_Codec_ExtractSignal(can_data, signal->start_bit, signal->signal_length, (bool)signal->is_big_endian,
                                       signal->is_signed);
       scaled = Can_Codec_ToPhysicalValue(value, signal->factor, signal->offset, signal->is_signed);
       ProcessCanMessage::setValue(signal->name, value, scaled, data_out);

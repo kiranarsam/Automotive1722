@@ -33,10 +33,11 @@
 #include <string>
 #include <vector>
 
-struct CanSignal {
+/* Below structure is used for database, to track with input dbc file */
+struct DbCanSignal {
   std::string name;
-  int startBit;
-  int signalLength;
+  int start_bit;
+  int signal_length;
   int is_big_endian;
   int is_signed;
   float factor;
@@ -44,15 +45,31 @@ struct CanSignal {
   float min;
   float max;
   std::string unit;
-  std::string receiverList;
-  uint8_t isMultiplexer;
-  uint8_t muxId;
+  std::string receiver_list;
+  uint8_t is_multiplexer;
+  uint8_t mux_id;
   uint8_t number;
 };
 
-struct CanMessage {
-  uint32_t canID;
+/* Below structure is used for database, to track with input dbc file */
+struct DbCanMessage {
+  uint32_t can_id;
   std::string name;
-  uint8_t isMultiplexed;
+  uint8_t is_multiplexed;
+  std::vector<DbCanSignal> signals;
+};
+
+/* Used to exchange information from manager to agents */
+struct CanSignal {
+  std::string name;
+  float value;
+};
+
+/* Used to exchange information from manager to agents */
+struct CanMessage {
+  uint32_t can_id;
+  int type; // CC or FD
+  uint8_t len;
+  uint32_t cycle_time;
   std::vector<CanSignal> signals;
 };

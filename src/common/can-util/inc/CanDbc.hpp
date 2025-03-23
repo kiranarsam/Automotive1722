@@ -40,13 +40,13 @@
 class CanDbc
 {
 public:
-  CanDbc(std::string &filename, std::unordered_map<uint32_t, CanMessage> &can_db);
+  CanDbc(std::string &filename, std::unordered_map<uint32_t, DbCanMessage> &can_db);
   ~CanDbc();
 
 private:
-  void init(std::string &filename, std::unordered_map<uint32_t, CanMessage> &can_db);
+  void init(std::string &filename, std::unordered_map<uint32_t, DbCanMessage> &can_db);
 
-  void parse(std::ifstream &fp, std::unordered_map<uint32_t, CanMessage> &can_db);
+  void parse(std::ifstream &fp, std::unordered_map<uint32_t, DbCanMessage> &can_db);
 
   bool m_is_initialized;
 };

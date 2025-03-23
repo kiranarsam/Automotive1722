@@ -36,6 +36,6 @@ install(TARGETS
 )
 
 install(FILES
-    ./test.dbc
+    ./dbc.dbc
     DESTINATION "${CMAKE_INSTALL_PREFIX}"
 )
