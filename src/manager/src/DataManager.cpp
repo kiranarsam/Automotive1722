@@ -103,31 +103,31 @@ void DataManager::run() {
 void DataManager::processReceivedMessage(callback_data &msg)
 {
   // notify to agents
-  CanMessage can_msg;
+  std::shared_ptr<CanMessage> can_msg = std::make_shared<CanMessage>();
   constructMessage(msg, can_msg);
 
   // forward the data can_msg
-  notify();
+  notify(can_msg);
 }
 
-void DataManager::constructMessage(callback_data &msg, CanMessage &can_msg)
+void DataManager::constructMessage(callback_data &msg, std::shared_ptr<CanMessage> can_msg)
 {
-  can_msg.type = static_cast<int>(msg.cf.type);
-  if(can_msg.type == 1) {
-    can_msg.can_id = msg.cf.data.fd.can_id;
+  can_msg->type = static_cast<int>(msg.cf.type);
+  if(can_msg->type == 1) {
+    can_msg->can_id = msg.cf.data.fd.can_id;
   } else {
-    can_msg.can_id = msg.cf.data.cc.can_id;
+    can_msg->can_id = msg.cf.data.cc.can_id;
   }
 
   try {
-    auto& dbc_msg = dbcCache.at(can_msg.can_id);
-    if(can_msg.type == 1) {
+    auto& dbc_msg = dbcCache.at(can_msg->can_id);
+    if(can_msg->type == 1) {
       ProcessCanMessage::process(msg.cf.data.fd.data, dbc_msg, can_msg);
     } else {
       ProcessCanMessage::process(msg.cf.data.cc.data, dbc_msg, can_msg);
     }
   } catch(...) {
-    std::cout << "Unknown can frame received: " << can_msg.can_id << std::endl;
+    std::cout << "Unknown can frame received: " << can_msg->can_id << std::endl;
   }
 }
 
@@ -187,9 +187,9 @@ void DataManager::unRegisterDataObserver(std::shared_ptr<IDataObserver> data_obs
   }
 }
 
-void DataManager::notify()
+void DataManager::notify(std::shared_ptr<CanMessage> can_msg)
 {
   for(auto items : m_observers) {
-    items->update();
+    items->update(can_msg);
   }
 }

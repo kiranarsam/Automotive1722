@@ -31,7 +31,7 @@
 #include "Agent.hpp"
 #include <iostream>
 
-void Agent::update()
+void Agent::update(std::shared_ptr<CanMessage> can_msg)
 {
-  std::cout << "From Agent update()" << std::endl;
+  std::cout << "Agent update() received can_id: " <<  can_msg->can_id << std::endl;
 }

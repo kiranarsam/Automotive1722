@@ -63,7 +63,7 @@ int main()
 
   uint8_t payload[8] = {0x08, 0x88, 0x08};
   auto& msg = database.at(111);
-  CanMessage can_msg;
+  std::shared_ptr<CanMessage> can_msg = std::make_shared<CanMessage>();
   ProcessCanMessage::process(payload, msg, can_msg);
 
   return 0;

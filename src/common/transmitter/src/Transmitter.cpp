@@ -53,7 +53,6 @@ Transmitter::Transmitter(const std::string &ifname, const std::string &macaddr, 
   : m_ifname{ifname}, m_macaddr{macaddr}, m_can_ifname{can_ifname}, m_channel_name{channel_name}
 {
   m_is_can_enabled = false;
-  m_is_can_initialized = false;
   init();
 }
 
@@ -116,7 +115,7 @@ void Transmitter::initSocketCan(bool enable)
 
 void Transmitter::start()
 {
-  if (m_is_can_enabled && m_is_can_initialized) {
+  if (m_is_can_enabled) {
     m_running = true;
     m_transmitter_thread = std::thread{std::bind(&Transmitter::run, this)};
   }
@@ -126,7 +125,7 @@ void Transmitter::stop()
 {
   m_running = false;
 
-  if (m_is_can_enabled && m_is_can_initialized) {
+  if (m_is_can_enabled) {
     if (std::this_thread::get_id() != m_transmitter_thread.get_id()) {
       if (m_transmitter_thread.joinable()) {
         m_transmitter_thread.join();

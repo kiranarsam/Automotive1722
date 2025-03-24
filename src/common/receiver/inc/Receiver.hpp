@@ -88,8 +88,6 @@ private:
 
   struct sockaddr *m_dest_addr;
 
-  bool m_is_can_initialized;
-
   CanWriter m_can_writer;
 
   DataCallbackHandler m_callback_handler;

@@ -52,13 +52,12 @@ class DataManager : public IDataSubscriber
     void unRegisterDataObserver(std::shared_ptr<IDataObserver> data_observer);
   private:
 
-    void notify();
+    void notify(std::shared_ptr<CanMessage> can_msg);
 
     void run();
 
     void processReceivedMessage(callback_data &msg);
-    void constructMessage(callback_data &msg, CanMessage &can_msg);
-    //void processTransmittedMessage()
+    void constructMessage(callback_data &msg, std::shared_ptr<CanMessage> can_msg);
 
     bool m_is_initialized;
     std::shared_ptr<IAggregator> m_can_aggregator;

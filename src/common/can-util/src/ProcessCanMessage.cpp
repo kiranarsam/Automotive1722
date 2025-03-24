@@ -35,18 +35,13 @@ extern "C" {
 #include "ProcessCanMessage.hpp"
 #include <iostream>
 
-void ProcessCanMessage::setValue(const std::string name, uint64_t value, double scaled, CanMessage &data_out)
-{
-  data_out.signals.push_back({name, (float)scaled});
-}
-
 /*
  * Copyright (c) 2025, Kiran Kumar Arsam,
  * Copyright (c) 2016, Eduard Bröcker,
  * All rights reserved.
  * Content is simplified to C++ usage.
  */
-void ProcessCanMessage::process(uint8_t *can_data, DbCanMessage &msg, CanMessage &data_out)
+void ProcessCanMessage::process(uint8_t *can_data, DbCanMessage &msg, std::shared_ptr<CanMessage> data_out)
 {
   uint64_t value = 0;
   double scaled = 0.;
@@ -59,7 +54,7 @@ void ProcessCanMessage::process(uint8_t *can_data, DbCanMessage &msg, CanMessage
         muxer_val = Can_Codec_ExtractSignal(can_data, signal->start_bit, signal->signal_length,
                                            (bool)signal->is_big_endian, signal->is_signed);
         scaled = Can_Codec_ToPhysicalValue(muxer_val, signal->factor, signal->offset, signal->is_signed);
-        ProcessCanMessage::setValue(signal->name, muxer_val, scaled, data_out);
+        data_out->signals.push_back({signal->name, (float)scaled});
         break;
       }
     }
@@ -70,7 +65,7 @@ void ProcessCanMessage::process(uint8_t *can_data, DbCanMessage &msg, CanMessage
         value = Can_Codec_ExtractSignal(can_data, signal->start_bit, signal->signal_length, (bool)signal->is_big_endian,
                                         signal->is_signed);
         scaled = Can_Codec_ToPhysicalValue(value, signal->factor, signal->offset, signal->is_signed);
-        ProcessCanMessage::setValue(signal->name, value, scaled, data_out);
+        data_out->signals.push_back({signal->name, (float)scaled});
       }
     }
   } else {
@@ -78,7 +73,7 @@ void ProcessCanMessage::process(uint8_t *can_data, DbCanMessage &msg, CanMessage
       value = Can_Codec_ExtractSignal(can_data, signal->start_bit, signal->signal_length, (bool)signal->is_big_endian,
                                       signal->is_signed);
       scaled = Can_Codec_ToPhysicalValue(value, signal->factor, signal->offset, signal->is_signed);
-      ProcessCanMessage::setValue(signal->name, value, scaled, data_out);
+      data_out->signals.push_back({signal->name, (float)scaled});
     }
   }
 }

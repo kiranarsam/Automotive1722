@@ -30,10 +30,13 @@
 
 #pragma once
 
+#include "can_dbc_common.hpp"
+#include <memory>
+
 class IDataObserver
 {
 public:
-  virtual void update() = 0;
+  virtual void update(std::shared_ptr<CanMessage> can_msg) = 0;
 
   virtual ~IDataObserver() {
 

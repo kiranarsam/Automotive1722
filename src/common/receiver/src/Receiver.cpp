@@ -54,7 +54,6 @@ Receiver::Receiver(const std::string &ifname, const std::string &macaddr, const 
   : m_ifname{ifname}, m_macaddr{macaddr}, m_can_ifname{can_ifname}, m_channel_name{channel_name}
 {
   m_is_can_enabled = false;
-  m_is_can_initialized = false;
   init();
 }
 

@@ -35,5 +35,5 @@
 class Agent : public IAgent
 {
 public:
-  void update();
+  void update(std::shared_ptr<CanMessage> can_msg);
 };

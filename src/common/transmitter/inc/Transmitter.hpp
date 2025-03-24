@@ -87,6 +87,4 @@ private:
   struct sockaddr *m_dest_addr;
 
   CanReader m_can_reader;
-
-  bool m_is_can_initialized;
 };

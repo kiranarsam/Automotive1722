@@ -33,6 +33,8 @@
 #include "IeeeCanCommon.hpp"
 #include "can_dbc_common.hpp"
 
+#include <memory>
+
 class ProcessCanMessage final
 {
 private:
@@ -40,8 +42,5 @@ private:
   ~ProcessCanMessage() = delete;
 
 public:
-  static void process(uint8_t *can_data, DbCanMessage &msg, CanMessage &data_out);
-
-private:
-  static void setValue(const std::string name, uint64_t value, double scaled, CanMessage &data_out);
+  static void process(uint8_t *can_data, DbCanMessage &msg, std::shared_ptr<CanMessage> data_out);
 };
