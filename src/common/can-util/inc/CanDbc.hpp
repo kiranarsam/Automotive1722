@@ -34,19 +34,23 @@
 #include <iostream>
 #include <unordered_map>
 #include <utility>
+#include <vector>
+#include <sstream>
 
 #include "can_dbc_common.hpp"
 
 class CanDbc
 {
 public:
-  CanDbc(std::string &filename, std::unordered_map<uint32_t, DbCanMessage> &can_db);
+  CanDbc(const std::string &filename, std::unordered_map<uint32_t, DbCanMessage> &can_db);
   ~CanDbc();
 
 private:
-  void init(std::string &filename, std::unordered_map<uint32_t, DbCanMessage> &can_db);
+  void init(const std::string &filename, std::unordered_map<uint32_t, DbCanMessage> &can_db);
 
   void parse(std::ifstream &fp, std::unordered_map<uint32_t, DbCanMessage> &can_db);
+
+  void parseLine(const std::string &line, std::vector<std::string> &tokens);
 
   bool m_is_initialized;
 };

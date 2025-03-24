@@ -30,9 +30,9 @@
 
 #include "CanDbc.hpp"
 
-#include <cstdio>
+#include <regex>
 
-CanDbc::CanDbc(std::string &filename, std::unordered_map<uint32_t, DbCanMessage> &can_db) : m_is_initialized{false}
+CanDbc::CanDbc(const std::string &filename, std::unordered_map<uint32_t, DbCanMessage> &can_db) : m_is_initialized{false}
 {
   init(filename, can_db);
 }
@@ -41,7 +41,7 @@ CanDbc::~CanDbc()
 {
 }
 
-void CanDbc::init(std::string &filename, std::unordered_map<uint32_t, DbCanMessage> &can_db)
+void CanDbc::init(const std::string &filename, std::unordered_map<uint32_t, DbCanMessage> &can_db)
 {
   if (!m_is_initialized) {
     std::ifstream fp(filename);
@@ -57,71 +57,88 @@ void CanDbc::init(std::string &filename, std::unordered_map<uint32_t, DbCanMessa
   }
 }
 
-/*
- * Copyright (c) 2025, Kiran Kumar Arsam,
- * Copyright (c) 2016, Eduard Bröcker,
- * All rights reserved.
- * Content is simplified to C++ usage.
- */
+void CanDbc::parseLine(const std::string &line, std::vector<std::string> &tokens)
+{
+  std::regex pattern("\\S+");
+  auto words_begin = std::sregex_iterator(line.begin(), line.end(), pattern);
+  auto words_end = std::sregex_iterator();
+  for (auto it = words_begin; it != words_end; it++) {
+    std::smatch match = *it;
+    tokens.push_back(match.str());
+  }
+}
+
 void CanDbc::parse(std::ifstream &fp, std::unordered_map<uint32_t, DbCanMessage> &can_db)
 {
-  char frame_name[512], sender[512];
-  char signal_name[512], signed_state, unit[512], receiver_list[512];
-  int start_bit = 0, signal_length = 0, byte_order = 0;
-  float factor = 0., offset = 0., min = 0., max = 0.;
-  char mux[4];
-  int mux_id = 0;
-  uint32_t frame_id = 0, len = 0;
-
-  std::string line{};
+  std::string line {};
+  uint32_t frame_id = 0;
 
   while (std::getline(fp, line)) {
-    if (std::sscanf(line.c_str(), " BO_ %d %s %d %s", &frame_id, frame_name, &len, sender) == 4) {
-      can_db[frame_id] = {frame_id, std::string{frame_name}};
-    } else if (std::sscanf(line.c_str(), " SG_ %s : %d|%d@%d%c (%f,%f) [%f|%f] %s %s", signal_name, &start_bit,
-                           &signal_length, &byte_order, &signed_state, &factor, &offset, &min, &max, unit,
-                           receiver_list) > 5) {
-      if (byte_order == 0) {
-        int pos = 7 - (start_bit % 8) + (signal_length - 1);
-        if (pos < 8) {
-          start_bit = start_bit - signal_length + 1;
-        } else {
-          int cpos = 7 - (pos % 8);
-          int bytes = (int)(pos / 8);
-          start_bit = cpos + (bytes * 8) + (int)(start_bit / 8) * 8;
+    auto is_bo_section = line.find("BO_");
+    auto is_sg_section = line.find("SG_");
+    std::vector<std::string> tokens;
+
+    if(is_bo_section != std::string::npos) { // frame section
+      parseLine(line, tokens);
+      if(tokens.size() >= 5) {
+        frame_id = std::stoul(tokens[1]);
+        auto frame_name = tokens[2];
+        can_db[frame_id] = {frame_id, frame_name.substr(0, frame_name.find(':'))};
+      }
+    } else if(is_sg_section != std::string::npos) { // signal section
+      parseLine(line, tokens);
+      auto &message = can_db[frame_id];
+      uint8_t index = 1;
+      auto signal_name = tokens[index++];
+      uint8_t mux_type = 0;
+      uint8_t mux_id = 0;
+      // Multiplexer
+      if(tokens.size() > 8) {
+        auto mux = tokens[index++];
+        char chMux;
+        std::stringstream mux_ss(mux);
+        mux_ss >> chMux >> mux_id;
+        if('M' == chMux) {
+          mux_type = 1;
+          message.is_multiplexed = 1;
+        } else if('m' == mux[0]) {
+          mux_type = 2;
+          message.is_multiplexed = 1;
         }
+      }
+      index++; // ignore ":"
+      std::stringstream bits_ss(tokens[index++]);
+      int start_bit, signal_len, byte_order;
+      char del1, del2, del3;
+      bits_ss >> start_bit >> del1 >> signal_len >> del2 >> byte_order >> del3;
+      int is_signed = (del3 == '-');
+
+      std::stringstream factor_ss(tokens[index++]);
+      float factor, offset;
+      factor_ss >> del1 >> factor >> del2 >> offset >> del3;
+
+      std::stringstream minmax_ss(tokens[index++]);
+      float min, max;
+      minmax_ss >> del1 >> min >> del2 >> max >> del3;
+
+      auto unit = tokens[index++];
+      std::string receiver_list = "";
+      for (int id = index; id < tokens.size(); id++) {
+        receiver_list += tokens[id];
       }
 
-      auto &message = can_db[frame_id];
-      message.signals.push_back({std::string{signal_name}, start_bit, signal_length, (byte_order == 0),
-                                 (signed_state == '-'), factor, offset, min, max, std::string{unit},
-                                 std::string{receiver_list}, 0, 0});
-    } else if (std::sscanf(line.c_str(), " SG_ %s %s : %d|%d@%d%c (%f,%f) [%f|%f] %s %s", signal_name, mux, &start_bit,
-                           &signal_length, &byte_order, &signed_state, &factor, &offset, &min, &max, unit,
-                           receiver_list) > 5) {
       if (byte_order == 0) {
-        int pos = 7 - (start_bit % 8) + (signal_length - 1);
+        // following code is from https://github.com/julietkilo/CANBabel/blob/master/src/main/java/com/github/canbabel/canio/dbc/DbcReader.java:
+        int pos = 7 - (start_bit % 8) + (signal_len - 1);
         if (pos < 8) {
-          start_bit = start_bit - signal_length + 1;
+            start_bit = start_bit - signal_len + 1;
         } else {
-          int cpos = 7 - (pos % 8);
-          int bytes = (int)(pos / 8);
-          start_bit = cpos + (bytes * 8) + (int)(start_bit / 8) * 8;
+            int cpos = 7 - (pos % 8);
+            int bytes = (int)(pos / 8);
+            start_bit = cpos + (bytes * 8) + (int)(start_bit/8) * 8;
         }
       }
-      auto &message = can_db[frame_id];
-      if (mux[0] == 'M') {
-        message.signals.push_back({std::string{signal_name}, start_bit, signal_length, (byte_order == 0),
-                                   (signed_state == '-'), factor, offset, min, max, std::string{unit},
-                                   std::string{receiver_list}, 1, 0});
-        message.is_multiplexed = 1;
-      } else if (mux[0] == 'm') {
-        std::sscanf(mux, "m%d", &mux_id);
-        message.signals.push_back({std::string{signal_name}, start_bit, signal_length, (byte_order == 0),
-                                   (signed_state == '-'), factor, offset, min, max, std::string{unit},
-                                   std::string{receiver_list}, 2, (uint8_t)mux_id});
-        message.is_multiplexed = 1;
-      }
+      message.signals.push_back({signal_name, start_bit, signal_len, (byte_order == 0), is_signed, factor, offset, min, max, unit, receiver_list, mux_type, mux_id});
     }
   }
 }

@@ -27,6 +27,7 @@ target_include_directories(test_dbc
 )
 
 target_link_libraries(test_dbc
+  cancodec
   canutil
 )
 

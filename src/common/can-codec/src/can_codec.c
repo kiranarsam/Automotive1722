@@ -31,6 +31,24 @@
 #include "can_codec.h"
 #include "can_encode_decode_inl.h"
 
+extern inline float toPhysicalValue(uint64_t target, float factor, float offset, bool is_signed);
+
+extern inline uint64_t fromPhysicalValue(float physical_value, float factor, float offset);
+
+extern inline void clearBits(uint8_t* target_byte, uint8_t* bits_to_clear, const uint8_t startbit, const uint8_t length);
+
+extern inline void storeSignal(uint8_t* frame, uint64_t value, const uint8_t startbit, const uint8_t length,
+                        bool is_big_endian, bool is_signed);
+
+extern inline uint64_t extractSignal(const uint8_t* frame, const uint8_t startbit, const uint8_t length, bool is_big_endian,
+                              bool is_signed);
+
+extern inline float decode(const uint8_t* frame, const uint16_t startbit, const uint16_t length, bool is_big_endian,
+                    bool is_signed, float factor, float offset);
+
+extern inline void encode(uint8_t* frame, const float value, const uint16_t startbit, const uint16_t length,
+                   bool is_big_endian, bool is_signed, float factor, float offset);
+
 float Can_Codec_Decode(const uint8_t* frame, const uint16_t startbit, const uint16_t length, bool is_big_endian, bool is_signed, float factor, float offset)
 {
   return decode(frame, startbit, length, is_big_endian, is_signed, factor, offset);

@@ -23,7 +23,9 @@ void handleSignal(int sig)
 }
 
 int main() {
+  // Data Manager
   DataManager dm;
+  // Can Agent
   auto agent = AgentFactory::createCanAgent();
 
   dm.registerDataObserver(agent);
@@ -37,6 +39,9 @@ int main() {
   g_cond_var.wait(lock, [&] { return g_ready; });
   lock.unlock();
 
+  //dm.unRegisterDataObserver(agent);
+  // Stop the agent
+  // Stop data Manager
   dm.stop();
 
   return 0;

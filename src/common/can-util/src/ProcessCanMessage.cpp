@@ -33,15 +33,11 @@ extern "C" {
 }
 
 #include "ProcessCanMessage.hpp"
+#include <iostream>
 
-void ProcessCanMessage::setValue(std::string &name, uint64_t value, double scaled, DbCanMessage &data_out)
+void ProcessCanMessage::setValue(const std::string name, uint64_t value, double scaled, CanMessage &data_out)
 {
-  for (auto signal = data_out.signals.begin(); signal != data_out.signals.end(); signal++) {
-    if (name.compare(signal->name) == 0) {
-      // update the value
-      break;
-    }
-  }
+  data_out.signals.push_back({name, (float)scaled});
 }
 
 /*
@@ -50,7 +46,7 @@ void ProcessCanMessage::setValue(std::string &name, uint64_t value, double scale
  * All rights reserved.
  * Content is simplified to C++ usage.
  */
-void ProcessCanMessage::process(uint8_t *can_data, DbCanMessage &msg, DbCanMessage &data_out)
+void ProcessCanMessage::process(uint8_t *can_data, DbCanMessage &msg, CanMessage &data_out)
 {
   uint64_t value = 0;
   double scaled = 0.;

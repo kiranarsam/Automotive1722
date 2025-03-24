@@ -29,6 +29,7 @@
  */
 
 #include "CanDbc.hpp"
+#include "ProcessCanMessage.hpp"
 
 int main()
 {
@@ -49,7 +50,7 @@ int main()
 
     for (auto &signal : msg.signals) {
       std::cout << "name: " << signal.name << ", " << signal.start_bit << "@" << signal.signal_length << ", "
-                << "big_endian: " << signal.is_big_endian << ", "
+                << "is_big_endian: " << signal.is_big_endian << ", "
                 << "signed: " << signal.is_signed << ", "
                 << "(" << signal.factor << ", " << signal.offset << "), "
                 << "[" << signal.min << "|" << signal.max << "], "
@@ -59,6 +60,11 @@ int main()
                 << "number: " << signal.number << std::endl;
     }
   }
+
+  uint8_t payload[8] = {0x08, 0x88, 0x08};
+  auto& msg = database.at(111);
+  CanMessage can_msg;
+  ProcessCanMessage::process(payload, msg, can_msg);
 
   return 0;
 }

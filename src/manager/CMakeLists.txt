@@ -12,6 +12,8 @@ target_include_directories(datamanager
 target_link_libraries(datamanager
   aggregator
   datahandler
+  canutil
+  cancodec
 )
 
 add_executable(test_datamanager
