@@ -48,13 +48,13 @@ CanReader::~CanReader()
 {
 }
 
-void CanReader::init(std::string &ifname, CanVariant can_variant)
+bool CanReader::init(std::string &ifname, CanVariant can_variant)
 {
   if (!m_is_initialized) {
     m_ifname = ifname;
     if (m_ifname.empty()) {
       std::cout << "vCAN ifname is empty" << std::endl;
-      return;
+      return false;
     }
 
     auto can_type = static_cast<int>(can_variant);
@@ -62,11 +62,14 @@ void CanReader::init(std::string &ifname, CanVariant can_variant)
     m_can_socket = Comm_Can_SetupSocket(m_ifname.c_str(), can_type);
     if (m_can_socket < 0) {
       std::cout << "Failure to create can socket " << std::endl;
-      return;
+      return false;
     }
 
     m_is_initialized = true;
+    std::cout << "CanReader Initialized" << std::endl;
   }
+
+  return true;
 }
 
 void CanReader::receiveData(CanFrame *can_frames, uint8_t num_acf_msgs)

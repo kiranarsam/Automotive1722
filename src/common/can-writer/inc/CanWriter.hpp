@@ -40,7 +40,7 @@ public:
   CanWriter();
   ~CanWriter();
 
-  void init(std::string &ifname, CanVariant can_variant);
+  bool init(std::string &ifname, CanVariant can_variant);
 
   void sendData(CanFrame *can_frames, uint8_t num_can_msgs);
 

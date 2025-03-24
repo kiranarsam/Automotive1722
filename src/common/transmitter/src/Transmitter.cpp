@@ -64,6 +64,11 @@ Transmitter::~Transmitter()
 void Transmitter::init()
 {
   if (!m_is_initialized) {
+    if(m_ifname.empty()) {
+      std::cout << "Transmitter not initialized, received empty interface " << std::endl;
+      return;
+    }
+
     int res = -1;
     if (m_ifname == "lo") {
       // Loopback address
@@ -84,7 +89,7 @@ void Transmitter::init()
 
       m_eth_fd = Comm_Ether_CreateTalkerSocket(-1);
       if (m_eth_fd < 0) {
-        std::cout << "Failure to create talker socket" << std::endl;
+        std::cout << "Failure to create transmitter socket" << std::endl;
         return;
       }
 
@@ -97,17 +102,15 @@ void Transmitter::init()
     }
 
     m_is_initialized = true;
-    std::cout << "Talker initialized" << std::endl;
+    std::cout << "Transmitter initialized" << std::endl;
   }
 }
 
 void Transmitter::initSocketCan(bool enable)
 {
   // Open a CAN socket for reading frames
-  if (enable && !m_is_can_initialized) {
-    m_can_reader.init(m_can_ifname, CanVariant::CAN_VARIANT_FD);
-    m_is_can_initialized = true;
-    m_is_can_enabled = true;
+  if (enable) {
+    m_is_can_enabled = m_can_reader.init(m_can_ifname, CanVariant::CAN_VARIANT_FD);
   }
 }
 
@@ -178,7 +181,7 @@ void Transmitter::run()
       // Send the packed frame out
       res = sendto(m_eth_fd, pdu, pdu_length, 0, (struct sockaddr *)m_dest_addr, sizeof(struct sockaddr_ll));
       if (res < 0) {
-        std::cout << "Failed to send data from talker" << std::endl;
+        std::cout << "Failed to send data from transmitter" << std::endl;
       }
     }
   }
@@ -197,6 +200,6 @@ void Transmitter::sendPacket(CanFrame *can_frames, uint8_t num_acf_msgs)
   // Send the packed frame out
   res = sendto(m_eth_fd, pdu, pdu_length, 0, (struct sockaddr *)m_dest_addr, sizeof(struct sockaddr_ll));
   if (res < 0) {
-    std::cout << "Failed to send data from talker" << std::endl;
+    std::cout << "Failed to send data from transmitter" << std::endl;
   }
 }

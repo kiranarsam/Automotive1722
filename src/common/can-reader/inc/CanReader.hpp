@@ -40,7 +40,7 @@ public:
   CanReader();
   ~CanReader();
 
-  void init(std::string &ifname, CanVariant can_variant);
+  bool init(std::string &ifname, CanVariant can_variant);
 
   void receiveData(CanFrame *can_frames, uint8_t num_acf_msgs);
 

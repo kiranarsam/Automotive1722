@@ -65,14 +65,19 @@ Receiver::~Receiver()
 void Receiver::init()
 {
   if (!m_is_initialized) {
+    if(m_ifname.empty()) {
+      std::cout << "Receiver not initialized, received empty interface " << std::endl;
+      return;
+    }
+
     int res = -1;
 
-    if (m_ifname == "lo") {
+    if (m_ifname.compare("lo") == 0) {
       // Loopback address
       m_eth_fd = Comm_Lo_CreateSocket(m_ifname.c_str(), ETH_P_TSN, &sk_ll_addr);
       m_dest_addr = (struct sockaddr *)&sk_ll_addr;
       if (m_eth_fd < 0) {
-        std::cout << "Failue to create listener ethernet socket" << std::endl;
+        std::cout << "Failue to create receiver ethernet socket" << std::endl;
         return;
       }
     } else {
@@ -87,13 +92,13 @@ void Receiver::init()
 
       m_eth_fd = Comm_Ether_CreateListenerSocket(m_ifname.c_str(), addr, ETH_P_TSN);
       if (m_eth_fd < 0) {
-        std::cout << "Failue to create listener ethernet socket" << std::endl;
+        std::cout << "Failue to create receiver ethernet socket" << std::endl;
         return;
       }
     }
 
     m_is_initialized = true;
-    std::cout << "init initialized " << std::endl;
+    std::cout << "Receiver initialized " << std::endl;
   }
 }
 
@@ -101,10 +106,8 @@ void Receiver::initSocketCan(bool enable)
 {
   // TODO: option to choose CC or FD
   // Open a CAN socket for reading frames
-  if (enable && !m_is_can_initialized) {
-    m_can_writer.init(m_can_ifname, CanVariant::CAN_VARIANT_FD);
-    m_is_can_initialized = true;
-    m_is_can_enabled = true;
+  if (enable) {
+    m_is_can_enabled = m_can_writer.init(m_can_ifname, CanVariant::CAN_VARIANT_FD);
   }
 }
 
@@ -123,6 +126,7 @@ void Receiver::start()
   if (m_is_initialized) {
     m_running = true;
     m_receiver_thread = std::thread{std::bind(&Receiver::run, this)};
+    std::cout << "Receiver thread started" << std::endl;
   }
 }
 
