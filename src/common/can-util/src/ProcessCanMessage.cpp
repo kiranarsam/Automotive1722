@@ -62,17 +62,19 @@ void ProcessCanMessage::process(uint8_t *can_data, DbCanMessage &msg, std::share
     for (auto signal = msg.signals.begin(); signal != msg.signals.end(); signal++) {
       // decode not multiplexed signals and signals with correct muxVal
       if (0 == signal->is_multiplexer || (2 == signal->is_multiplexer && signal->mux_id == muxer_val)) {
-        value = Can_Codec_ExtractSignal(can_data, signal->start_bit, signal->signal_length, (bool)signal->is_big_endian,
-                                        signal->is_signed);
-        scaled = Can_Codec_ToPhysicalValue(value, signal->factor, signal->offset, signal->is_signed);
+        scaled = Can_Codec_Decode(can_data, signal->start_bit, signal->signal_length, (bool)signal->is_big_endian, signal->is_signed, signal->factor, signal->offset);
+        // value = Can_Codec_ExtractSignal(can_data, signal->start_bit, signal->signal_length, (bool)signal->is_big_endian,
+        //                                 signal->is_signed);
+        // scaled = Can_Codec_ToPhysicalValue(value, signal->factor, signal->offset, signal->is_signed);
         data_out->signals.push_back({signal->name, (float)scaled});
       }
     }
   } else {
     for (auto signal = msg.signals.begin(); signal != msg.signals.end(); signal++) {
-      value = Can_Codec_ExtractSignal(can_data, signal->start_bit, signal->signal_length, (bool)signal->is_big_endian,
-                                      signal->is_signed);
-      scaled = Can_Codec_ToPhysicalValue(value, signal->factor, signal->offset, signal->is_signed);
+      scaled = Can_Codec_Decode(can_data, signal->start_bit, signal->signal_length, (bool)signal->is_big_endian, signal->is_signed, signal->factor, signal->offset);
+      // value = Can_Codec_ExtractSignal(can_data, signal->start_bit, signal->signal_length, (bool)signal->is_big_endian,
+                                      // signal->is_signed);
+      // scaled = Can_Codec_ToPhysicalValue(value, signal->factor, signal->offset, signal->is_signed);
       data_out->signals.push_back({signal->name, (float)scaled});
     }
   }
