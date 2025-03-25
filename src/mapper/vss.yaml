@@ -1,0 +1,332 @@
+Vehicle:
+  description: High-level vehicle data.
+  type: branch
+
+Vehicle.Acceleration:
+  description: Spatial acceleration. Axis definitions according to ISO 8855.
+  type: branch
+
+Vehicle.Acceleration.Lateral:
+  datatype: float
+  description: Vehicle acceleration in Y (lateral acceleration).
+  type: sensor
+  unit: m/s^2
+
+Vehicle.Acceleration.Longitudinal:
+  datatype: float
+  description: Vehicle acceleration in X (longitudinal acceleration).
+  type: sensor
+  unit: m/s^2
+
+Vehicle.Acceleration.Vertical:
+  datatype: float
+  description: Vehicle acceleration in Z (vertical acceleration).
+  type: sensor
+  unit: m/s^2
+
+Vehicle.AngularVelocity:
+  description: Spatial rotation. Axis definitions according to ISO 8855.
+  type: branch
+
+Vehicle.AngularVelocity.Pitch:
+  datatype: float
+  description: Vehicle rotation rate along Y (lateral).
+  type: sensor
+  unit: degrees/s
+
+Vehicle.AngularVelocity.Roll:
+  datatype: float
+  description: Vehicle rotation rate along X (longitudinal).
+  type: sensor
+  unit: degrees/s
+
+Vehicle.AngularVelocity.Yaw:
+  datatype: float
+  description: Vehicle rotation rate along Z (vertical).
+  type: sensor
+  unit: degrees/s
+
+Vehicle.AverageSpeed:
+  datatype: float
+  description: Average speed for the current trip.
+  type: sensor
+  unit: km/h
+
+Vehicle.Body:
+  description: All body components.
+  type: branch
+
+Vehicle.Body.BodyType:
+  datatype: string
+  description: Body type code as defined by ISO 3779.
+  type: attribute
+
+Vehicle.Body.Horn:
+  description: Horn signals.
+  type: branch
+
+Vehicle.Body.Horn.IsActive:
+  datatype: boolean
+  description: Horn active or inactive. True = Active. False = Inactive.
+  type: actuator
+
+Vehicle.Body.Lights:
+  description: Exterior lights.
+  type: branch
+
+Vehicle.Body.Lights.IsHighBeamSwitchOn:
+  datatype: boolean
+  description: Status of the high beam switch. True = high beam enabled. False = high beam not enabled.
+  type: actuator
+
+Vehicle.Body.Lights.LightSwitch:
+  allowed:
+  - 'OFF'
+  - POSITION
+  - DAYTIME_RUNNING_LIGHTS
+  - AUTO
+  - BEAM
+  datatype: string
+  description: Status of the vehicle main light switch.
+  type: actuator
+
+Vehicle.Body.Raindetection:
+  description: Rain sensor signals.
+  type: branch
+
+Vehicle.Body.Raindetection.Intensity:
+  datatype: uint8
+  description: Rain intensity. 0 = Dry, No Rain. 100 = Covered.
+  max: 100
+  type: sensor
+  unit: percent
+
+Vehicle.CargoVolume:
+  datatype: float
+  description: The available volume for cargo or luggage. For automobiles, this is usually the trunk volume.
+  min: 0
+  type: attribute
+  unit: l
+
+Vehicle.CurbWeight:
+  datatype: uint16
+  default: 0
+  description: Vehicle curb weight, including all liquids and full tank of fuel, but no cargo or passengers.
+  type: attribute
+  unit: kg
+
+Vehicle.CurrentLocation:
+  description: The current latitude and longitude of the vehicle.
+  type: branch
+
+Vehicle.CurrentLocation.Altitude:
+  datatype: double
+  description: Current altitude relative to WGS 84 reference ellipsoid, as measured at the position of GNSS receiver antenna.
+  type: sensor
+  unit: m
+
+Vehicle.CurrentLocation.Heading:
+  datatype: double
+  description: Current heading relative to geographic north. 0 = North, 90 = East, 180 = South, 270 = West.
+  max: 360
+  min: 0
+  type: sensor
+  unit: degrees
+
+Vehicle.CurrentLocation.HorizontalAccuracy:
+  datatype: double
+  description: Accuracy of the latitude and longitude coordinates.
+  type: sensor
+  unit: m
+
+Vehicle.CurrentLocation.Latitude:
+  datatype: double
+  description: Current latitude of vehicle in WGS 84 geodetic coordinates, as measured at the position of GNSS receiver antenna.
+  max: 90
+  min: -90
+  type: sensor
+  unit: degrees
+
+Vehicle.CurrentLocation.Longitude:
+  datatype: double
+  description: Current longitude of vehicle in WGS 84 geodetic coordinates, as measured at the position of GNSS receiver antenna.
+  max: 180
+  min: -180
+  type: sensor
+  unit: degrees
+
+Vehicle.CurrentLocation.Timestamp:
+  datatype: string
+  description: Timestamp from GNSS system for current location, formatted according to ISO 8601 with UTC time zone.
+  type: sensor
+  unit: iso8601
+
+Vehicle.CurrentLocation.VerticalAccuracy:
+  datatype: double
+  description: Accuracy of altitude.
+  type: sensor
+  unit: m
+
+Vehicle.CurrentOverallWeight:
+  datatype: uint16
+  description: Current overall Vehicle weight. Including passengers, cargo and other load inside the car.
+  type: sensor
+  unit: kg
+
+Vehicle.EmissionsCO2:
+  datatype: int16
+  description: The CO2 emissions.
+  type: attribute
+  unit: g/km
+
+Vehicle.GrossWeight:
+  datatype: uint16
+  default: 0
+  description: Curb weight of vehicle, including all liquids and full tank of fuel and full load of cargo and passengers.
+  type: attribute
+  unit: kg
+
+Vehicle.Height:
+  datatype: uint16
+  default: 0
+  description: Overall vehicle height.
+  type: attribute
+  unit: mm
+
+Vehicle.IsBrokenDown:
+  datatype: boolean
+  description: Vehicle breakdown or any similar event causing vehicle to stop on the road,
+  type: sensor
+
+Vehicle.IsMoving:
+  datatype: boolean
+  description: Indicates whether the vehicle is stationary or moving.
+  type: sensor
+
+Vehicle.Length:
+  datatype: uint16
+  default: 0
+  description: Overall vehicle length.
+  type: attribute
+  unit: mm
+
+Vehicle.MaxTowBallWeight:
+  datatype: uint16
+  default: 0
+  description: Maximum vertical weight on the tow ball of a trailer.
+  type: attribute
+  unit: kg
+
+Vehicle.MaxTowWeight:
+  datatype: uint16
+  default: 0
+  description: Maximum weight of trailer.
+  type: attribute
+  unit: kg
+
+Vehicle.RoofLoad:
+  datatype: int16
+  description: The permitted total weight of cargo and installations (e.g. a roof rack) on top of the vehicle.
+  type: attribute
+  unit: kg
+
+Vehicle.Speed:
+  datatype: float
+  description: Vehicle speed.
+  type: sensor
+  unit: km/h
+
+Vehicle.StartTime:
+  datatype: string
+  default: 0000-01-01T00:00Z
+  description: Start time of current or latest trip, formatted according to ISO 8601 with UTC time zone.
+  type: attribute
+  unit: iso8601
+
+Vehicle.Trailer:
+  description: Trailer signals.
+  type: branch
+
+Vehicle.Trailer.IsConnected:
+  datatype: boolean
+  description: Signal indicating if trailer is connected or not.
+  type: sensor
+
+Vehicle.TraveledDistance:
+  datatype: float
+  description: Odometer reading, total distance traveled during the lifetime of the vehicle.
+  type: sensor
+  unit: km
+
+Vehicle.TraveledDistanceSinceStart:
+  datatype: float
+  description: Distance traveled since start of current trip.
+  type: sensor
+  unit: km
+
+Vehicle.TripDuration:
+  datatype: float
+  description: Duration of latest trip.
+  type: sensor
+  unit: s
+
+Vehicle.TripMeterReading:
+  datatype: float
+  description: Trip meter reading.
+  type: actuator
+  unit: km
+
+Vehicle.TurningDiameter:
+  datatype: uint16
+  description: Minimum turning diameter, Wall-to-Wall, as defined by SAE J1100-2009 D102.
+  type: attribute
+  unit: mm
+
+Vehicle.VehicleIdentification:
+  description: Attributes that identify a vehicle.
+  type: branch
+
+Vehicle.VehicleIdentification.BodyType:
+  datatype: string
+  description: Indicates the design and body style of the vehicle (e.g. station wagon, hatchback, etc.).
+  type: attribute
+
+Vehicle.VehicleIdentification.Brand:
+  datatype: string
+  description: Vehicle brand or manufacturer.
+  type: attribute
+
+Vehicle.VehicleIdentification.DateVehicleFirstRegistered:
+  datatype: string
+  description: The date in ISO 8601 format of the first registration of the vehicle with the respective public authorities.
+  type: attribute
+  unit: iso8601
+
+Vehicle.VehicleIdentification.Model:
+  datatype: string
+  description: Vehicle model.
+  type: attribute
+
+Vehicle.VehicleIdentification.Year:
+  datatype: uint16
+  description: Model year of the vehicle.
+  type: attribute
+
+Vehicle.WidthExcludingMirrors:
+  datatype: uint16
+  default: 0
+  description: Overall vehicle width excluding mirrors, as defined by SAE J1100-2009 W103.
+  type: attribute
+  unit: mm
+
+Vehicle.WidthFoldedMirrors:
+  datatype: uint16
+  description: Overall vehicle width with mirrors folded, as defined by SAE J1100-2009 W145.
+  type: attribute
+  unit: mm
+
+Vehicle.WidthIncludingMirrors:
+  datatype: uint16
+  description: Overall vehicle width including mirrors, as defined by SAE J1100-2009 W144.
+  type: attribute
+  unit: mm
