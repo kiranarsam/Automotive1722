@@ -16,6 +16,8 @@ public:
   VssMapper(bool generate_json = false);
   ~VssMapper();
 
+  void stop();
+
   void getDbcNameFromVssMap(const std::string &vss_name, std::string &dbc_name);
   void getVssNameFromDbcMap(const std::string &dbc_name, std::string &vss_name);
   void getVssMessageFromVssName(const std::string &vss_name, VssMessage& vss_msg);

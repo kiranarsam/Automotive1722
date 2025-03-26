@@ -15,6 +15,13 @@ VssMapper::~VssMapper()
 
 }
 
+void VssMapper::stop()
+{
+  m_vss2dbc_map.clear();
+  m_dbc2vss_map.clear();
+  m_db_cache_map.clear();
+}
+
 void VssMapper::getDbcNameFromVssMap(const std::string &vss_name, std::string &dbc_name)
 {
   try {
