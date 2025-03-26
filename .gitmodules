@@ -6,3 +6,6 @@
 	path = src/common/yaml-cpp
 	url = https://github.com/kiranarsam/yaml-cpp.git
 	branch = develop
+[submodule "src/common/hiredis"]
+	path = src/common/hiredis
+	url = https://github.com/kiranarsam/hiredis.git

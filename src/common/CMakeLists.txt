@@ -14,5 +14,6 @@ add_subdirectory(data-router)
 add_subdirectory(can-util)
 add_subdirectory(yaml-cpp)
 add_subdirectory(settings)
+add_subdirectory(hiredis)
 
 add_subdirectory(logger)
