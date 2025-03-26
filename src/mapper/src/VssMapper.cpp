@@ -80,7 +80,7 @@ bool VssMapper::loadVssPathYaml(const std::string& filename)
       std::cout << "Error opening \"vss_out.json\" file" << std::endl;
       return false;
     }
-    file_out << "{\n";
+    file_out << "{\n  \"Version\" : \"1.0\"\n";
   }
 
   YAML::Node node = YAML::LoadFile(filename);
@@ -100,7 +100,7 @@ bool VssMapper::loadVssPathYaml(const std::string& filename)
         }
         m_db_cache_map[key] = {key, datatype, type, unit};
         if (m_gen_vss_json) {
-          file_out << "  \"" << key << "\" : \"\",\n";
+          file_out << "  ,\"" << key << "\" : \"\"\n";
         }
       }
     }
@@ -109,7 +109,7 @@ bool VssMapper::loadVssPathYaml(const std::string& filename)
   if (m_gen_vss_json) {
     file_out << "}";
     file_out.close();
-    std::cout << "Generated vss_out.json file. Rename this file to vss_dbc_mapper.json " << std::endl;
+    std::cout << "Generated vss_out.json file. Rename this file to vss_dbc_mapper.json update accordingly." << std::endl;
   }
   node.reset();
 

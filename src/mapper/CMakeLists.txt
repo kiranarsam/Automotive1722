@@ -48,5 +48,6 @@ install(TARGETS
 
 install(FILES
     ./vss.yaml
+    ./vss_dbc_mapper.json
     DESTINATION "${CMAKE_INSTALL_PREFIX}"
 )
