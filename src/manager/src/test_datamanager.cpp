@@ -59,7 +59,7 @@ int main() {
   auto agent = AgentFactory::createCanAgent();
 
   dm.registerDataObserver(agent);
-
+  agent->start();
   dm.start();
 
   std::signal(SIGINT, handleSignal);
@@ -73,6 +73,7 @@ int main() {
   // Stop the agent
   // Stop data Manager
   dm.stop();
+  agent->stop();
 
   return 0;
 }

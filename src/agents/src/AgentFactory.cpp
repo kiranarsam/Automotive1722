@@ -29,9 +29,9 @@
  */
 
 #include "AgentFactory.hpp"
-#include "Agent.hpp"
+#include "CanAgent.hpp"
 
 std::shared_ptr<IAgent> AgentFactory::createCanAgent()
 {
-  return std::make_shared<Agent>();
+  return std::make_shared<CanAgent>();
 }

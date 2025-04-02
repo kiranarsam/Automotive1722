@@ -28,12 +28,43 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "VssCanExchange.hpp"
 
-#include "IAgent.hpp"
+#include <mutex>
+#include <condition_variable>
+#include <csignal>
+#include <iostream>
 
-class Agent : public IAgent
+std::mutex g_mutex;
+std::condition_variable g_cond_var;
+
+bool g_ready = false;
+static std::shared_ptr<VssCanExchange> m_vde {nullptr};
+
+void handleSignal(int sig);
+
+void handleSignal(int sig)
 {
-public:
-  void update(std::shared_ptr<CanMessage> can_msg);
-};
+  if((sig == SIGINT) || (sig == SIGTERM)) {
+    std::cout << "EXITED invoked sigint or sigterm " << std::endl;
+    g_ready = true;
+    g_cond_var.notify_one();
+  }
+}
+
+int main()
+{
+  m_vde = std::make_shared<VssCanExchange>();
+  m_vde->start();
+
+  std::signal(SIGINT, handleSignal);
+  std::signal(SIGTERM, handleSignal);
+
+  std::unique_lock<std::mutex> lock(g_mutex);
+  g_cond_var.wait(lock, [&] { return g_ready; });
+  lock.unlock();
+
+  m_vde->stop();
+
+  return 0;
+}

@@ -71,13 +71,13 @@ int main()
   CanFrame *frame1 = &can_frames[0];
   CanFrame *frame2 = &can_frames[1];
   frame1->type = CanVariant::CAN_VARIANT_CC;
-  frame1->data.cc.can_id = 0x123;
+  frame1->data.cc.can_id = 0x06F;
   frame1->data.cc.len = 8;
   frame2->type = CanVariant::CAN_VARIANT_CC;
-  frame2->data.cc.can_id = 0x456;
+  frame2->data.cc.can_id = 0x0DE;
   frame2->data.cc.len = 8;
-  uint8_t payload1[8] = {0x0, 0x01, 0x02, 0x03};
-  uint8_t payload2[8] = {0x4, 0x05, 0x06, 0x07};
+  uint8_t payload1[8] = {0x0, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07};
+  uint8_t payload2[8] = {0x10, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77};
   memcpy(frame1->data.cc.data, payload1, 8);
   memcpy(frame2->data.cc.data, payload2, 8);
 

@@ -1,7 +1,7 @@
 project(Agents_Project)
 
 add_library(agents STATIC
-  "src/Agent.cpp"
+  "src/CanAgent.cpp"
   "src/AgentFactory.cpp"
 )
 
@@ -12,4 +12,6 @@ target_include_directories(agents
 
 target_link_libraries(agents
   datahandler
+  redisdatabase
+  vssmapper
 )

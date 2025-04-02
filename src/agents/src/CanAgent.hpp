@@ -28,10 +28,44 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "Agent.hpp"
-#include <iostream>
+#pragma once
 
-void Agent::update(std::shared_ptr<CanMessage> can_msg)
+#include "IAgent.hpp"
+#include "RedisDatabase.hpp"
+#include "VssMapper.hpp"
+
+#include <thread>
+#include <mutex>
+#include <condition_variable>
+
+class CanAgent : public IAgent
 {
-  std::cout << "Agent update() received can_id: " <<  can_msg->can_id << std::endl;
-}
+public:
+
+  CanAgent();
+  ~CanAgent();
+
+  void update(std::shared_ptr<CanMessage> can_msg);
+
+  void start();
+
+  void stop();
+
+private:
+
+  void init();
+
+  void run();
+
+  void processMessage(std::shared_ptr<CanMessage> can_msg);
+
+  bool m_is_running;
+  std::thread m_thread;
+  std::mutex m_mutex;
+  std::condition_variable m_cond_var;
+
+  std::queue<std::shared_ptr<CanMessage>> m_queue;
+
+  std::shared_ptr<RedisDatabase> m_redis;
+  std::shared_ptr<VssMapper> m_vss_mapper;
+};

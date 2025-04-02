@@ -89,10 +89,10 @@ void RedisConnection::stop()
       } else {
         m_cmd_thread.detach();
       }
+    }
 
-      while(!m_cmd_queue.empty()) {
-        m_cmd_queue.pop();
-      }
+    while(!m_cmd_queue.empty()) {
+      m_cmd_queue.pop();
     }
   }
 }

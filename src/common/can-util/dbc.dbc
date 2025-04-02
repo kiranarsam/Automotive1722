@@ -19,7 +19,7 @@ BO_ 111 ID_frame_01: 8 Node_A
  SG_ SIG_ID01_08 : 55|8@0+ (1.0,0.0) [0|0] "" Receiver
 
 BO_ 222 ID_frame_02: 8 Node_B
- SG_ SIG_ID02_01 : 0|8@1+ (1.0,0.0) [0|0] "" Receiver
+ SG_ VEHICLE_AVG_SPEED : 0|8@1+ (1.0,0.0) [0|0] "" Receiver
  SG_ SIG_ID02_02 : 8|8@1+ (1.0,0.0) [0|0] "" Receiver
  SG_ SIG_ID02_03 : 16|8@1+ (1.0,0.0) [0|0] "" Receiver
  SG_ SIG_ID02_04 : 24|8@1+ (1.0,0.0) [0|0] "" Receiver
