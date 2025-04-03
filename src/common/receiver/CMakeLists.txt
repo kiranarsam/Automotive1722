@@ -16,21 +16,3 @@ target_link_libraries(receiver
   canwriter
   datahandler
 )
-
-add_executable(test_receiver
-  "src/main_rx.cpp"
-)
-
-target_include_directories(test_receiver
-  PUBLIC
-    ${CMAKE_CURRENT_SOURCE_DIR}/inc
-)
-
-target_link_libraries(test_receiver
-  receiver
-)
-
-install(TARGETS
-  test_receiver
-  DESTINATION "${CMAKE_INSTALL_PREFIX}"
-)
