@@ -5,4 +5,4 @@ Automotive 1722, how data is packed in IEEE packets with CAN frame using open172
 ## System architecture and communication
 In below image, the data is communicated via ETH between two or more devices having with different destination MAC address and its data flow.
 
-![Block diagram](image.png)
+![Block Diagram](image.png)
